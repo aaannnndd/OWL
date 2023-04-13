@@ -1,0 +1,11 @@
+#include "defines.hpp"
+#include "requisitions.hpp"
+#include "parameters.hpp"
+#include "loadouts.hpp"
+#include "Client\GUI\uiComponents.inc"
+
+#if FOR_MULTIPLAYER_MACRO
+	#include "multiplayerSecurity.hpp"
+#endif
+
+allowFunctionsLog = 1; 

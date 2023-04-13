@@ -1,0 +1,5 @@
+#define BACKGROUND_COLOR 0.1,0.1,0.1,0.80
+#define TAB_UNFOCUS_COLOR 0.1,0.1,0.1,0.40
+#define COLOR_BLU #0099ff
+#define COLOR_OP #DD1111
+#define COLOR_IND #00ff44

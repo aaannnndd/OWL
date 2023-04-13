@@ -1,0 +1,1 @@
+#define HANDSHAKE_TIMEOUT 120
