@@ -14,13 +14,13 @@
 
 ### Client
 
--1). Initialize common function and variables
--2). Initialize client default values and static variables/functions
--3). Sent request to be initialized to the server
--4). Await "OK"
--5). Initialize client with any extra data the server sends back
--6). Initialize the UI
--7). Wait for player to interact with UI to request things from server
+- 1). Initialize common function and variables
+- 2). Initialize client default values and static variables/functions
+- 3). Sent request to be initialized to the server
+- 4). Await "OK"
+- 5). Initialize client with any extra data the server sends back
+- 6). Initialize the UI
+- 7). Wait for player to interact with UI to request things from server
 
 ## Goals
 
