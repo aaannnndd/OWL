@@ -41,12 +41,12 @@ with uiNamespace do {
 	OWL_UI_hudSeizingBar progressSetPosition 0.8;
 	OWL_UI_hudSeizingBar ctrlSetTextColor [0.8,0.2,0,0.8];
 	OWL_UI_hudSeizingBack ctrlSetBackgroundColor [0.1,0.1,0.8,0.8];
-	OWL_UI_hudSeizingLabel ctrlCommit 0;
-	OWL_UI_hudSeizingBar ctrlCommit 0;
 	OWL_UI_hudSeizingBack ctrlCommit 0;
+	OWL_UI_hudSeizingBar ctrlCommit 0;
+	OWL_UI_hudSeizingLabel ctrlCommit 0;
 	OWL_UI_hudSeizingBack ctrlShow false;
-	OWL_UI_hudSeizingLabel ctrlShow false;
 	OWL_UI_hudSeizingBar ctrlShow false;
+	OWL_UI_hudSeizingLabel ctrlShow false;
 
 	/*OWL_UI_hudSeizingInfo = _display ctrlCreate ["RscStructuredText", -1];
 	OWL_UI_hudSeizingInfo ctrlSetPosition [_xrel+_wb*32, _yrel+_hb*22.5, _wb*7, _hb*1];

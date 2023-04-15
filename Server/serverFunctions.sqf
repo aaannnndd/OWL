@@ -42,7 +42,7 @@ OWL_fnc_onSectorSeized = {
 	private _oldSide = _sector getVariable "OWL_sectorSide";
 
 	_sector setVariable ["OWL_sectorSide", _seizedBy, TRUE];
-	_sector setVariable ["OWL_sectorTickets", [150,150,150], TRUE];
+	_sector setVariable ["OWL_sectorTickets", [150,150], TRUE];
 
 	// You only keep zone restriction if you capture a sector from AAF.
 	// However you do not gain assets to protect it like in vanilla.

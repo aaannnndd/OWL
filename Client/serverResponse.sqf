@@ -1,7 +1,7 @@
 /*
 	This file contains all the functions which are sent from the server to the client in response to a request they have sent.
 	
-	Could be as little as a UI update, or notification. 
+	Could be as little as a UI update, or notification/play sound
 */
 
 

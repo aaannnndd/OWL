@@ -3,7 +3,7 @@
 #include "loadouts.hpp"
 #include "Client\GUI\uiComponents.inc"
 
-#include "multiplayerSecurity.hpp"
+//#include "multiplayerSecurity.hpp"
 
 allowFunctionsLog = 1;
 disabledAI = 1;

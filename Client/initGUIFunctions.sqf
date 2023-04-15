@@ -95,8 +95,8 @@ OWL_fnc_UI_hudUpdateCapture = {
 	if (_capSide != _sectorSide) then {
 		_ctrlProgress ctrlSetTextColor (OWL_sideColor get _capSide);
 	};
-	_ctrlProgress ctrlCommit 0;
 	_ctrlBackground ctrlCommit 0;
+	_ctrlProgress ctrlCommit 0;
 };
 
 OWL_fnc_UI_hudUpdateRecruits = {

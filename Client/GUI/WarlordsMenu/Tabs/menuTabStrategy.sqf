@@ -1,14 +1,3 @@
-/*
-	Asset Allotmment
-		5 Light Armor
-		5 Armor
-		3 Aircraft
-		50 Infantry
-
-	Defenses:
-
-	Offense:
-*/
 params ["_display", "_tabIdx"];
 
 private _cur_selected = uiNamespace getVariable ["OWL_UI_strategy_map_last_clicked", objNull];
@@ -316,6 +305,7 @@ private _show = _cur_selected getVariable ["OWL_sectorSide", sideEmpty] == side 
 	_x ctrlShow _show;
 } forEach _asset_controls;
 
+// TODO: these dummy values, generate from config file
 private _loadOuts = [
 	["RIFLEMAN", 0, true, "", "SquadLeader"],
 	["ENGINEER", 200, false, "Toolkit", "Engineer"],

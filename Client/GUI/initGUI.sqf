@@ -326,7 +326,7 @@ with uiNamespace do {
 			systemChat "Fast travel unavailable.";
 		};
 
-		_cd = uiNamespace getVariable "OWL_UI_requestCooldown";
+		_cd = uiNamespace getVariable ["OWL_UI_requestCooldown", serverTime];
 		if (_cd - serverTime > 0) exitWith {playSound "AddItemFailed"};
 		uiNamespace setVariable ["OWL_UI_requestCooldown", serverTime+10];
 

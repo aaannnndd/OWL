@@ -65,6 +65,16 @@ OWL_fnc_crLoadout = {
 
 };
 
+OWL_fnc_removeFastTravelTicket = {
+	params ["_sector", "_side"];
+
+	private _ticketArr = _sector getVariable ["OWL_sectorTickets", [0,0]];
+	private _sideIndex = OWL_competingSides find _side;
+	_ticketArr set [_sideIndex, (_ticketArr # _sideIndex) - 1];
+	_sector setVariable ["OWL_sectorTickets", _ticketArr, TRUE];
+	// If 0 Notify cliets? Or just let them be unable to fast travel?
+};
+
 // Client requests to fast travel. 
 OWL_fnc_crFastTravel = {
 	params ["_player", "_sector"];
@@ -78,8 +88,6 @@ OWL_fnc_crFastTravel = {
 	private _index = OWL_allSectors find _sector;
 	private _spawnPos = OWL_sectorSpawnPoints # _index;
 	private _pos = selectRandom _spawnPos;
-
-	// TODO: deal with fast travel tickets.
 
 	if ([_sector, side _player] call OWL_fnc_sectorContestedFor) then {
 		_vdir = (position _sector) vectorFromTo (position _player);
@@ -95,6 +103,8 @@ OWL_fnc_crFastTravel = {
 		sleep 4.5;
 		(_this#0) setPosATL (_this#1);
 	};
+
+	[_sector, side _player] call OWL_fnc_removeFastTravelTicket;
 };
 
 // Client requests sector scan for the team.

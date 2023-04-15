@@ -65,7 +65,7 @@ OWL_mainBases = [];
 	_sector setVariable ["OWL_sectorRequirements",	_sectorRequirements, TRUE];
 	_sector setVariable ["OWL_sectorArea", 			_sectorArea, TRUE];
 	_sector setVariable ["OWL_sectorScanCooldown",	[0,0,0], TRUE];
-	_sector setVariable ["OWL_sectorTickets",		[150,150,150], TRUE];
+	_sector setVariable ["OWL_sectorTickets",		[150,150], TRUE];
 	_sector setVariable ["OWL_sectorAreaOld", 		[_sectorPos] + triggerArea _trigger, TRUE];
 	_sector setVariable ["OWL_sectorProtected", true, TRUE];
 	_sector setVariable ["OWL_sectorAssets", [[],[],[]], TRUE];

@@ -75,6 +75,10 @@ OWL_fnc_log = {
 OWL_fnc_sectorSeizableForSide = {
 	params ["_sector", "_side"];
 	
+	if (!(_side in OWL_competingSides)) exitWith {
+		false;
+	};
+
 	private _sideIndex = OWL_competingSides find _side;
 
 	if ((_sector getVariable "OWL_sectorProtected") && !(_sector != OWL_contestedSector # _sideIndex)) exitWith {
