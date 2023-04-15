@@ -1,3 +1,13 @@
+/*
+	This file contains all functions the client will ask the server to execute 
+	when requesting a certain asset/functionality.
+*/
+
+
+/******************************************************
+***********			Initialization			***********
+******************************************************/
+
 OWL_fnc_ICS = {
 	private _owner = remoteExecutedOwner;
 	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
@@ -25,38 +35,19 @@ addMissionEventHandler ["PlayerDisconnected", {
 	OWL_allWarlords deleteAt _owner;
 }];
 
+/******************************************************
+***********			Asset Business			***********
+******************************************************/
+
+// Request to aidrop a list of assets at an objects location.
 OWL_fnc_crAirdrop = {
-	params ["_player", "_sector", "_assets", "_flags"];
-
-	if(!([_player, _sector, _assets] call OWL_fnc_conditionAirdrop)) exitWith {
-		format ["Airdrop Request from %1 (%2) does not meet conditions.", name _player] call OWL_fnc_log;
-	};
-
-	private _infantry = [];
-	private _gear = [];
-	private _vehicles = [];
-	{
-		private _class = _x;
-		if (_class isKindOf "Vehicle") then {
-			_vehicles pushBack _class;
-		};
-		if (_class isKindOf "Man") then {
-			_infantry pushBack _class;
-		};
-		if (_class isKindOf "ReammoBox_F") then {
-			_gear pushBack _class;
-		};
-	} forEach _assets;
-
-	/**	
+	params ["_target", "_assets", "_flags"];
 	
 	_para = createVehicle [if (_isMan) then {"Steerable_Parachute_F"} else {"B_Parachute_02_F"}, _finalPos, [], 0, "FLY"];
 	_para setPos [_finalPos # 0, _finalPos # 1, if (_isMan) then {50 + random 50} else {150 + random 100}];
 	_para setVariable ["finalPos", _finalPos]; 
 	
 	_item = group (_this # 0) createUnit [_x, position (_this # 0), [], 0, "NONE"];
-
-	*/
 
 	{
 		_vehicle = createVehicle [_x, position _player, [], 0, "NONE"];
@@ -68,23 +59,13 @@ OWL_fnc_crAirdrop = {
 	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, (position _player) vectorAdd [0, 0, 100]];
 };
 
-OWL_fnc_conditionLoadout = {
+// Client requests to use a loadout
+OWL_fnc_crLoadout = {
 	params ["_player", "_loadout"];
 
-	if (!(_player call OWL_fnc_isInFriendlyZone)) exitWith {false;};
-
-	// check player has right $$$
-
-	true;
 };
 
-OWL_fnc_crLoadout = {
-	params ["_loadout"];
-
-
-
-};
-
+// Client requests to fast travel. 
 OWL_fnc_crFastTravel = {
 	params ["_player", "_sector"];
 
@@ -100,10 +81,13 @@ OWL_fnc_crFastTravel = {
 
 	// TODO: deal with fast travel tickets.
 
-	if ([_sector, side _player] call OWL_fnc_sectorContestedFor) exitWith {
-		// TODO find contested spawn point
-		systemChat "Figure out tesselation for contested spawn points";
-		_pos = [0,0,0];
+	if ([_sector, side _player] call OWL_fnc_sectorContestedFor) then {
+		_vdir = (position _sector) vectorFromTo (position _player);
+		_pos = (position _sector) vectorAdd (_vdir vectorMultiply (((_sector getvariable "OWL_sectorArea")#0)*2));
+		_pos set [2, 0];
+
+		_orth = [_vdir#1, (_vdir#0)*-1, 0];
+		_pos = _pos findEmptyPosition [0, 50];
 	};
 
 	[_sector, _pos] remoteExec ["OWL_fnc_srFastTravel", remoteExecutedOwner];
@@ -113,6 +97,7 @@ OWL_fnc_crFastTravel = {
 	};
 };
 
+// Client requests sector scan for the team.
 OWL_fnc_crSectorScan = {
 	params ["_sector"];
 
@@ -133,6 +118,7 @@ OWL_fnc_crSectorScan = {
 	[_sector, serverTime+30] remoteExec ["OWL_fnc_srSectorScan", side _player];
 };
 
+// Requests to turn their dummy 'simpleObject' into a real object @ position.
 OWL_fnc_crDeployDefense = {
 	params ["_player", "_sector", "_asset"];
 
@@ -141,6 +127,7 @@ OWL_fnc_crDeployDefense = {
 	};	
 };
 
+// Requests to magically appear a boat in the water
 OWL_fnc_crDeployNaval = {
 	params ["_player", "_sector", "_asset"];
 
@@ -149,6 +136,7 @@ OWL_fnc_crDeployNaval = {
 	};	
 };
 
+// Requests to have class '_asset' deployed at '_sector'
 OWL_fnc_crAircraftSpawn = {
 	params ["_player", "_sector", "_asset"];
 
@@ -157,6 +145,16 @@ OWL_fnc_crAircraftSpawn = {
 	};	
 };
 
+// Request to have class '_asset' deployed with them flying in it
+OWL_fnc_crAircraftSpawnFlying = {
+	params ["_player", "_asset"];
+
+	if (!(_this call OWL_fnc_conditionAircraftSpawnFlying)) exitWith {
+		[format ["Aircraft Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
+	};	
+};
+
+// Requests to have an asset removed from the game.
 OWL_fnc_crRemoveAsset = {
 	params ["_player", "_asset"];
 
@@ -165,6 +163,7 @@ OWL_fnc_crRemoveAsset = {
 	};	
 };
 
+// Requests to purchase reenforcements for a sector
 OWL_fnc_crPurchaseReenforcements = {
 	params ["_player", "_sector", "_asset"];
 
@@ -174,6 +173,7 @@ OWL_fnc_crPurchaseReenforcements = {
 };
 
 /* Re-do this at some point. Tacked a hacky fix onto old code at the end to make it work quickly */
+// When a client sends in a vote for a new sector.
 OWL_fnc_crSectorVote = {
 	params ["_sector"];
 
@@ -185,7 +185,7 @@ OWL_fnc_crSectorVote = {
 		["OWL_fnc_CL_sectorVote: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
 	};
 
-	if (!([_sector, side player] call OWL_fnc_conditionSectorVote)) exitWith {};
+	if (!([_sector, side _player] call OWL_fnc_conditionSectorVote)) exitWith {};
 
 	private _sideIndex = OWL_competingSides find (side _player);
 
@@ -217,6 +217,7 @@ OWL_fnc_crSectorVote = {
 	OWL_sectorVoteList set [_sideIndex, _votes];
 	publicVariable "OWL_sectorVoteList";
 
+	// If it's the first vote cast of the voting session, initiate countdown + tell clients
 	if (count _voteTable == 1 && !(OWL_voteTrigger#_sideIndex)) then {
 		OWL_voteTrigger set [_sideIndex, true];
 		private _endTime = serverTime+15;
@@ -224,5 +225,6 @@ OWL_fnc_crSectorVote = {
 		[(side _player), _endTime] spawn OWL_fnc_delayedSectorSelection;
 	};
 
+	// Update the clients with new vote info
 	remoteExec ["OWL_fnc_srSectorVoteUpdate", side _player];
 };

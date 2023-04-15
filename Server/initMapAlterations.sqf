@@ -1,4 +1,7 @@
-// When you need to simulate heavy CPU load on the server, this is good to use.
+/*
+	Remove certain objects globally when the server starts up.
+	UNUSED
+*/
 
 private _list = nearestObjects [ [15000,15000,0] , [], 20000];
 
@@ -17,7 +20,12 @@ private _list = nearestObjects [ [15000,15000,0] , [], 20000];
 
 } forEach _list;
 
-/* "Land_spp_Mirror_F", "mil_wiredfence_f.p3d", "mil_wiredfenced_f.p3d"
+/* 
+
+I'm guessing removing this field of reflective obejcts might result in FPS improvements.
+Feels hacky to do this, but if FPS is ++ enough, I'm not against it.
+
+"Land_spp_Mirror_F", "mil_wiredfence_f.p3d", "mil_wiredfenced_f.p3d"
 This is if we want to re-do MPP to be more infantry friendly.
 {
 	_strInterp = str _x;
@@ -27,4 +35,6 @@ This is if we want to re-do MPP to be more infantry friendly.
 	if ( (typeOf _x) in ["Land_spp_Mirror_F"] ) then { 
     	hideObjectGlobal _x; 
 	};
-} forEach _list;*/
+} forEach _list;
+
+*/

@@ -2,22 +2,10 @@
 **********[     Init UI Variables      ]************
 ************************************************* */
 
-uiNamespace setVariable ["OWL_UI_lastTab", 1];
-uiNamespace setVariable ["OWL_UI_controlList", createHashMap];
+call compileFinal preprocessFileLineNumbers "Client\GUI\WarlordsMenu\initMenu.sqf";
 
-OWL_ASSET_LIST = createHashMap;
-OWL_ASSET_INFO = createHashMap;
-
-OWL_MENU_TABS = [
-	"Strategy",
-	"Assets",
-	"Asset Management",
-	"Commander",
-	"DickMeasuring",
-	"Options"
-];
-
-// Register any cutRsc layers
+// Create our Warlords HUD
+("OWL_hudLayer" call BIS_fnc_rscLayer) cutRsc ["OWL_RscMainHUD", "PLAIN"];
 
 /***************************************************
 **********[       Process Assets       ]************
@@ -48,29 +36,6 @@ _path = missionConfigFile >> "CfgWLRequisitionPresets" >> "OpenWarlords" >> str 
 **************[      Functions      ]***************
 ************************************************* */
 
-OWL_fnc_uiGetControl = {
-	params ["_name"];
-
-	(uiNamespace getVariable "OWL_UI_controlList") get _name;
-};
-
-OWL_fnc_uiSetControl = {
-	params ["_name", "_ctrl"];
-
-	_old = (uiNamespace getVariable "OWL_UI_controlList") getOrDefault [_name, controlNull];
-	if ( !(_old isEqualTo controlNull) ) then {
-		ctrlDelete _old;
-	};
-
-	(uiNamespace getVariable "OWL_UI_controlList") set [_name, _ctrl];
-};
-
-OWL_fnc_TabIDC = {
-	params ["_curTab"];
-	OWL_IDC_COUNTER set [_curTab-1, (OWL_IDC_COUNTER select (_curTab-1))+1];
-	(OWL_IDC_COUNTER select _curTab-1)-1;
-};
-
 OWL_fnc_UI_mapDrawCommon = {
 	params ["_ctrlMap"];
 
@@ -78,7 +43,7 @@ OWL_fnc_UI_mapDrawCommon = {
 	if (count _eh == 0) then {
 		_eh = _ctrlMap ctrlAddEventHandler ["Draw", {
 			_this select 0 drawIcon [
-				getMissionPath "aa.paa", // custom images can also be used: getMissionPath "\myFolder\myIcon.paa"
+				getMissionPath "aircraft_carrier.paa",
 				[1,1,1,1],
 				getPosASLVisual asd,
 				(9.05)*(1/(ctrlMapScale (_this select 0))),
@@ -149,9 +114,8 @@ OWL_fnc_UI_mapDrawCommon = {
 	};
 };
 
-(findDisplay 12) displayCtrl 51 call OWL_fnc_UI_mapDrawCommon;
-
 private _mainMap = (findDisplay 12) displayCtrl 51;
+_mainMap call OWL_fnc_UI_mapDrawCommon;
 
 _mainMap ctrlAddEventHandler ["MouseButtonDown", {
 	params ["_map", "_button", "_xPos", "_yPos", "_shift", "_ctrl", "_alt"];
@@ -195,9 +159,9 @@ _mainMap ctrlAddEventHandler ["MouseButtonDown", {
 			};
 		};
 	} else {
-		objNull call OWL_fnc_UI_onMainMapLocationClicked;
-		uiNamespace setVariable ["OWL_UI_main_map_last_clicked", objNull];
-		(uiNamespace getVariable ["OWL_UI_mainmap_label_selected", controlNull]) ctrlSetStructuredText parseText "<t size='2' align='center'>Select a Sector</t>";
+		//objNull call OWL_fnc_UI_onMainMapLocationClicked;
+		//uiNamespace setVariable ["OWL_UI_main_map_last_clicked", objNull];
+		//(uiNamespace getVariable ["OWL_UI_mainmap_label_selected", controlNull]) ctrlSetStructuredText parseText "<t size='2' align='center'>Select a Sector</t>";
 	};
 }];
 
@@ -256,7 +220,7 @@ _mainMap ctrlAddEventHandler ["Draw", {
 	private _clicked  = uiNamespace getVariable ["OWL_UI_main_map_last_clicked", objNull];
 	if(!isNull _selected) then {
 		_this select 0 drawIcon [
-			"\a3\ui_f\data\Map\GroupIcons\selector_selectedFriendly_ca.paa", // custom images can also be used: getMissionPath "\myFolder\myIcon.paa"
+			"\a3\ui_f\data\Map\GroupIcons\selector_selectedFriendly_ca.paa",
 			[1,1,1,1],
 			getPosASLVisual _selected,
 			32,
@@ -272,7 +236,7 @@ _mainMap ctrlAddEventHandler ["Draw", {
 
 	if(!isNull _clicked) then {
 		_this select 0 drawIcon [
-			"\a3\ui_f\data\Map\GroupIcons\selector_selectedMission_ca.paa", // custom images can also be used: getMissionPath "\myFolder\myIcon.paa"
+			"\a3\ui_f\data\Map\GroupIcons\selector_selectedMission_ca.paa", 
 			[0,1,0,1],
 			getPosASLVisual _clicked,
 			32,
@@ -285,6 +249,24 @@ _mainMap ctrlAddEventHandler ["Draw", {
 			"right"
 		];
 	};
+
+	{
+		if (side _x == playerSide) then {
+			_this select 0 drawIcon [
+				"\a3\ui_f\data\Map\GroupIcons\selector_selectable_ca.paa",
+				[1,1,1,0.8],
+				getPosASLVisual _x,
+				20,
+				20,
+				0,
+				name _x,
+				1,
+				0.04,
+				"PuristaLight",
+				"right"
+			];
+		};
+	} forEach (call BIS_fnc_listPlayers);
 }];
 
 private _mapDisplay = (findDisplay 12);
@@ -298,20 +280,41 @@ with uiNamespace do {
 	OWL_UI_mainmap_button_ss = _mapDisplay ctrlCreate ["RscButtonMenu", -1]; 
 	OWL_UI_mainmap_button_vote = _mapDisplay ctrlCreate ["RscButtonMenu", -1];
 	OWL_UI_mainmap_label_selected = _mapDisplay ctrlCreate ["RscStructuredText", -1];
+	OWL_UI_mainmap_progress_ss = _mapDisplay ctrlCreate ["RscProgress", -1];
 
 	OWL_UI_main_map_last_clicked = uiNamespace getVariable ["OWL_UI_main_map_last_clicked", objNull];
 
-	OWL_UI_mainmap_label_selected ctrlSetPosition [_xrel, _yrel+_hb*1, _wb*40, _hb*1.5];
-	OWL_UI_mainmap_label_selected ctrlSetStructuredText parseText format ["<t size='2' align='center'>%1</t>", if(isNull OWL_UI_main_map_last_clicked) then {"Select a Sector"} else {OWL_UI_main_map_last_clicked getVariable "OWL_sectorName"}];
+	OWL_UI_mainmap_label_selected ctrlSetPosition [_xrel, _yrel+_hb*21, _wb*40, _hb*1.5];
+	OWL_UI_mainmap_label_selected ctrlSetStructuredText parseText format ["<t size='1.5' align='center'>%1</t>", if(isNull OWL_UI_main_map_last_clicked) then {"Select a Sector"} else {OWL_UI_main_map_last_clicked getVariable "OWL_sectorName"}];
 
 	OWL_UI_mainmap_button_ft ctrlSetPosition [_xrel+_wb*5.125, _yrel+_hb*23, _wb*9.875, _hb*1.5];
 	OWL_UI_mainmap_button_ss ctrlSetPosition [_xrel+_wb*15.125, _yrel+_hb*23, _wb*9.875, _hb*1.5];
+	OWL_UI_mainmap_progress_ss ctrlSetPosition [_xrel+_wb*15.125, _yrel+_hb*23, _wb*9.875, _hb*1.5];
 	OWL_UI_mainmap_button_vote ctrlSetPosition [_xrel+_wb*25.125, _yrel+_hb*23, _wb*9.875, _hb*1.5];
 
 	OWL_UI_mainmap_button_ft ctrlSetStructuredText parseText "<t size='2' align='center'>Fast Travel</t>";
 	OWL_UI_mainmap_button_ss ctrlSetStructuredText parseText "<t size='2' align='center'>Sector Scan</t>";
 	OWL_UI_mainmap_button_vote ctrlSetStructuredText parseText "<t size='2' align='center'>Vote Sector</t>";
 
+	if (!isNull OWL_UI_main_map_last_clicked) then {
+		private _cdArr = OWL_UI_main_map_last_clicked getVariable "OWL_sectorScanCooldown";
+		private _cd = _cdArr # (OWL_competingSides find playerSide);
+		if (_cd > serverTime) then {
+			_cd = ((_cd - serverTime) / 300);
+		} else {
+			_cd = 0;
+		};
+		OWL_UI_mainmap_progress_ss progressSetPosition _cd;
+	} else {
+		OWL_UI_mainmap_progress_ss progressSetPosition 0;
+	};
+
+	OWL_UI_mainmap_button_ft ctrlSetBackgroundColor [0.2, 0.2, 0.2, 0.8];
+	OWL_UI_mainmap_button_ss ctrlSetBackgroundColor [0.2, 0.2, 0.2, 0.8];
+	OWL_UI_mainmap_button_vote ctrlSetBackgroundColor [0.2, 0.2, 0.2, 0.8];
+	OWL_UI_mainmap_progress_ss ctrlSetTextColor [0.8,0.6,0,0.5];
+
+	OWL_UI_mainmap_progress_ss ctrlCommit 0;
 	OWL_UI_mainmap_button_ft ctrlCommit 0;
 	OWL_UI_mainmap_button_ss ctrlCommit 0;
 	OWL_UI_mainmap_button_vote ctrlCommit 0;
@@ -350,33 +353,16 @@ with uiNamespace do {
 OWL_fnc_UI_onMainMapLocationClicked = {
 	params ["_object"];
 
+	private _button_ft = uiNamespace getVariable "OWL_UI_mainmap_button_ft";
+	private _button_ss = uiNamespace getVariable "OWL_UI_mainmap_button_ss";
+	private _button_vote = uiNamespace getVariable "OWL_UI_mainmap_button_vote";
 
+	_button_ft ctrlEnable ([player, _object] call OWL_fnc_conditionFastTravel);
+	_button_ss ctrlEnable ([_object, playerSide] call OWL_fnc_conditionSectorScan);
+	_button_vote ctrlEnable ([_object, playerSide] call OWL_fnc_conditionSectorVote);
 };
 
-/**OWL_fnc_drawAircraftCarrier = {
-	params ["_ctrlMap"];
-
-	_eh = _ctrlMap getVariable ["OWL_UI_mapEH", []];
-	if (count _eh == 0) then {
-		_eh = _ctrlMap ctrlAddEventHandler ["Draw", {
-			_this select 0 drawIcon [
-				getMissionPath "aa.paa", // custom images can also be used: getMissionPath "\myFolder\myIcon.paa"
-				[1,1,1,1],
-				getPosASLVisual asd,
-				(10.73-(0.0985))*(1/(ctrlMapScale (_this select 0))),
-				2.70*(1/(ctrlMapScale (_this select 0))),
-				((getDirVisual asd)+90.45)%360,
-				"",
-				1,
-				0.03,
-				"TahomaB",
-				"right"	
-			];
-		}];
-
-		_ctrlMap setVariable ["OWL_UI_mapEH", _eh];
-	};
-}; */
+(uiNamespace getVariable ["OWL_UI_main_map_last_clicked", objNull]) call OWL_fnc_UI_onMainMapLocationClicked;
 
 OWL_fnc_UI_AssetTab_onCPChanged = {
 	params ["_amount"];
@@ -416,14 +402,6 @@ OWL_fnc_UI_AssetTab_onCPChanged = {
 	_menu_asset_footer = uiNamespace getVariable ["OWL_UI_asset_menu_footer", controlNull];
 	_menu_asset_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_FLOATING_FUNDS];
 };
-
-/*
-	BIS_WL_sectorColors = [
-		[profileNamespace getVariable ["Map_OPFOR_R", 0], profileNamespace getVariable ["Map_OPFOR_G", 1], profileNamespace getVariable ["Map_OPFOR_B", 1], 0.8],
-		[profileNamespace getVariable ["Map_BLUFOR_R", 0], profileNamespace getVariable ["Map_BLUFOR_G", 1], profileNamespace getVariable ["Map_BLUFOR_B", 1], 0.8],
-		[profileNamespace getVariable ["Map_Independent_R", 0], profileNamespace getVariable ["Map_Independent_G", 1], profileNamespace getVariable ["Map_Independent_B", 1], 0.8]
-	];
-*/
 
 addMissionEventHandler ["Draw3D", {
 	private _curSector = OWL_contestedSector # (OWL_competingSides find playerSide);

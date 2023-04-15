@@ -1,11 +1,20 @@
-#include "defines.hpp"
 #include "requisitions.hpp"
 #include "parameters.hpp"
 #include "loadouts.hpp"
 #include "Client\GUI\uiComponents.inc"
 
-#if FOR_MULTIPLAYER_MACRO
-	#include "multiplayerSecurity.hpp"
-#endif
+#include "multiplayerSecurity.hpp"
 
-allowFunctionsLog = 1; 
+allowFunctionsLog = 1;
+disabledAI = 1;
+
+author			= "Ando";
+onLoadName		= "Open Warlords";
+onLoadMission	= "Capture things";
+
+class Header
+{
+	gameType = Warlords;
+	minPlayers = 1;
+	maxPlayers = 10;
+};

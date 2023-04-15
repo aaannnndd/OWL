@@ -54,7 +54,7 @@ _cy = _sectorPos # 1;
 	createMarkerLocal [_marker, [_px, _py]];
 	_marker setMarkerSizeLocal [_ax, _ay];
 	_marker setMarkerColorLocal _markerColor;
-	_marker setMarkerAlphaLocal (if (_sector getVariable "OWL_sectorSide" == playerSide) then {0.175} else {0.35});
+	_marker setMarkerAlphaLocal (if(_showBorder) then {0.35} else {0});
 	_marker setMarkerBrushLocal "Solid";
 	_marker setMarkerShapeLocal "RECTANGLE";
 	

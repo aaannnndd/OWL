@@ -1,63 +1,28 @@
 
-/* Possible sector parameters
+/* Available Sector Paramaters
 
-OWL_sectorParam_canBeBase
-	0 - Can't be base
-	1 - Can be base
-	2 - Can be base and default base if randomization is disabled
-	
-OWL_sectorParam_name
-	Any string to use as a sector name
+	OWL_sectorParam_canBeBase
+		0 - Can't be base
+		1 - Can be base
+		2 - Can be base and default base if randomization is disabled
+		
+	OWL_sectorParam_name
+		Localization string to use for the sector name
 
-OWL_sectorParam_side
-	Indicates who owns the sector at the start of the game
-	0 - Unclaimed
-	1 - Competing side 1
-	2 - Competing side 2
-	3 - Defending side
+	OWL_sectorParam_side
+		Indicates who owns the sector at the start of the game
+		0 - Unclaimed
+		1 - Competing side 1
+		2 - Competing side 2
+		3 - Defending side
 
-OWL_sectorParam_income
-OWL_sectorParam_hasHarbour
-OWL_sectorParam_hasHelipad
-OWL_sectorParam_hasRunway
-OWL_sectorParam_fastTravelEnabled
-OWL_sectorParam_borderSize
-
-OWL_sectorParam_canBeBase
-OWL_sectorParam_name
-OWL_sectorParam_side
-OWL_sectorParam_income
-OWL_sectorParam_fastTravelEnabled
-OWL_sectorParam_borderSize
-OWL_sectorParam_assetRequirements = "AWH"   "Aircraft, Water, Helicopter"
-
+	OWL_sectorParam_income
+	OWL_sectorParam_fastTravelEnabled
+	OWL_sectorParam_borderSize
+	OWL_sectorParam_assetRequirements
+		String - "AWH"   ( stands for "Aircraft, Water, Helipad" )
+		Combine them for different dispositions
 */
-
-OWL_fnc_protectSector = {
-	params ["_sector", "_forceMax"];
-
-	if (isNull _sector) exitWith {};
-
-	private _assetList = _sector getVariable ["OWL_sectorAssets", [[],[],[]]];
-
-	/* I feel like I should verify this */
-	private _concassets = [];
-	(OWL_reenforceAssetList get (_sector getVariable "OWL_sectorSide")) apply {_concassets append _x};
-	private _error = false;
-	{
-		{
-			if (!(_x in _concassets)) then {
-				_error = true;
-			};
-		} forEach _x;
-	} forEach _assetList;
-
-	_sector setVariable ["OWL_sectorProtected", true, TRUE];
-};
-
-OWL_fnc_spawnProtections = {
-	params ["_sector"];
-};
 
 OWL_allSectors = [];
 OWL_candidateBases = [];
@@ -102,10 +67,6 @@ OWL_mainBases = [];
 	_sector setVariable ["OWL_sectorScanCooldown",	[0,0,0], TRUE];
 	_sector setVariable ["OWL_sectorTickets",		[150,150,150], TRUE];
 	_sector setVariable ["OWL_sectorAreaOld", 		[_sectorPos] + triggerArea _trigger, TRUE];
-
-	// TODO: ["DefaultTicketValuePerSector <-- or something like that"] call BIS_fnc_getParamValue
-
-	/* Set up dynamic variables only */
 	_sector setVariable ["OWL_sectorProtected", true, TRUE];
 	_sector setVariable ["OWL_sectorAssets", [[],[],[]], TRUE];
 
@@ -117,6 +78,9 @@ OWL_mainBases = [];
 	};
 
 	_sector setVariable ["OWL_sectorIndex",	OWL_allSectors pushBack _sector, TRUE];
+	
+	_trigger enableSimulationGlobal false;
+	deleteVehicle _trigger;
 } forEach (entities "Logic");
 
 {
@@ -130,4 +94,4 @@ OWL_mainBases = [];
 publicVariable "OWL_allSectors";
 publicVariable "OWL_mainBases";
 
-call OWL_fnc_updateSpawnPoints;
+call OWL_fnc_initSpawnPoints;

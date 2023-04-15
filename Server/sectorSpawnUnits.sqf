@@ -18,8 +18,15 @@ if (!(_side in OWL_competingSides)) exitWith {
 		private _units = _x#1;
 		private _grp = createGroup _side;
 		private _position = (selectRandom _roads);
+		private _veh =
 		{
-			_grp createUnit [_x, _position, [], 20, "FORM"];
+			if (_x isKindOf "Man") then {
+				_grp createUnit [_x, _position, [], 20, "FORM"];
+			} else {
+				private _veh = createVehicle [_x, _position, [], 20, "NONE"];
+				private _vg = createVehicleCrew _veh;
+				(units _vg) join _grp;
+			};
 		} forEach _units;
 		_wp = _grp addWaypoint [_position, 10];
 		_wp setWaypointType "MOVE";

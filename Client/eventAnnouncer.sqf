@@ -1,8 +1,4 @@
-#include "..\defines.hpp"
-
 params ["_sound"];
-
-// Add option to enable announcer?... just exitWith nothing here.
 
 private _delayTimestamp = missionNamespace getVariable ["OWL_soundQueueDelay", time];
 private _diffTime = _delayTimestamp - time;

@@ -1,5 +1,8 @@
 params ["_ctrlMap"];
 
+// Generalize the 'map' functionality and draw handles across all the UI map components.
+// Good idea, hurts my brain rn
+
 _ctrlMap ctrlAddEventHandler ["MouseButtonDown", {
 	params ["_map", "_button", "_xPos", "_yPos", "_shift", "_ctrl", "_alt"];
 	_overItem = ctrlMapMouseOver (_map);

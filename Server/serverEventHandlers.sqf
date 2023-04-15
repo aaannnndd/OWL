@@ -1,7 +1,5 @@
 /* All event handlers on the SERVER SIDE */
 
-OWL_persistentData = createHashMap;
-
 addMissionEventHandler ["PlayerDisconnected", {
 	params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
 

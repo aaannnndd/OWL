@@ -21,7 +21,11 @@ OWL_fnc_srInitClient = {
 
 	if (OWL_gameState # OWL_sideIndex == "voting") then {
 		"BIS_WL_Voting_WEST" call OWL_fnc_eventAnnouncer;
-		"VOTE FOR THE NEXT SECTOR" spawn BIS_fnc_WLSmoothText;	
+		"VOTE FOR THE NEXT SECTOR" spawn BIS_fnc_WLSmoothText;
+		0 spawn {
+			sleep 0.25;
+			-1 call OWL_fnc_UI_hudUpdateVoting;
+		};
 	};
 };
 
@@ -319,11 +323,50 @@ OWL_srZoneRestrictTimer = {
 
 	params ["_endTime"];
 
+	private _handle = missionNamespace getVariable ["OWL_zrHandle", scriptNull];
+
 	if (_endTime == -1) exitWith {
 		// terminate handle if exists.
+		if (!isNull _handle) then {
+			terminate _handle;
+
+			private _background = uiNamespace getVariable ["OWL_UI_hudSeizingBack", controlNull];
+			private _progress = uiNamespace getVariable ["OWL_UI_hudSeizingBar", controlNull];
+			private _label = uiNamespace getVariable ["OWL_UI_hudSeizingLabel", controlNull];
+
+			_background ctrlShow false;
+			_progress ctrlShow false;
+			_label ctrlShow false;
+		};
 	};
 
-	// start timer that ends @ _endTime;
+	_handle = _endTime spawn {
+		params ["_timestamp"];
+
+		private _background = uiNamespace getVariable ["OWL_UI_hudSeizingBack", controlNull];
+		private _progress = uiNamespace getVariable ["OWL_UI_hudSeizingBar", controlNull];
+		private _label = uiNamespace getVariable ["OWL_UI_hudSeizingLabel", controlNull];
+
+		_background ctrlShow true;
+		_progress ctrlShow true;
+		_label ctrlShow true;
+
+		_background ctrlSetBackgroundColor [0.2,0.2,0.2,0.8];
+		_label ctrlSetStructuredText parseText format ["<t size='0.15'>&#160;</t><br/><t size='1' align='center'>RESTRICTED AREA</t>"];
+		_progress ctrlSetTextColor [0.8, 0.2, 0, 0.8];
+
+		"RESTRICTED AREA. LEAVE OR BE KILLED." spawn BIS_fnc_WLSmoothText;
+		playSound "air_raid";
+
+		while {_timestamp > serverTime} do {
+			_progress progressSetPosition (1 - (_timestamp-serverTime) / 30);
+		};
+
+		_background ctrlShow false;
+		_progress ctrlShow false;
+		_label ctrlShow false;
+	};
+	missionNamespace setVariable ["OWL_zrHandle", _handle];
 };
 
 OWL_fnc_srSectorSelected = {
@@ -341,7 +384,7 @@ OWL_fnc_srSectorSelected = {
 		};
 	};
 
-	call OWL_fnc_UI_hudUpdateVoting;
+	-1 call OWL_fnc_UI_hudUpdateVoting;
 
 	private _button_vote = uiNamespace getVariable ["OWL_UI_strategy_button_vote", controlNull];
 	_button_vote ctrlEnable false;
@@ -349,4 +392,5 @@ OWL_fnc_srSectorSelected = {
 	/* Update stuff */
 
 	_sector call OWL_fnc_updateSectorMarker;
+	_sector call OWL_fnc_UI_onMainMapLocationClicked;
 };

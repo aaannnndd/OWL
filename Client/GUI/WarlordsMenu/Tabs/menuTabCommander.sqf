@@ -28,7 +28,7 @@ _bar ctrlCommit 0;*/
 
 	(findDisplay 46) displayAddEventHandler ["KeyUp", {
 		_key = _this # 1;
-		if (_key == 22) then {
+		if (_key == OWL_key_menu) then {
 			execVM "Client\GUI\UI_COMMAND_MENU.sqf";
 		};
 	}];

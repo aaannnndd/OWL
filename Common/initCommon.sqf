@@ -5,14 +5,6 @@
 call compileFinal preprocessFileLineNumbers "Common\clientRequestConditions.sqf";
 call compileFinal preprocessFileLineNumbers "Common\commonFunctions.sqf";
 
-OWL_fnc_log = {
-	private _msg = "[OWL] " + _this#0;
-	if (OWL_devMode && hasInterface) then {
-		systemChat _msg;
-	};
-	diag_log _msg;
-};
-
 if (isMultiplayer) then {
   OWL_fnc_syncedTime = { serverTime };
 }
@@ -20,29 +12,43 @@ else {
   OWL_fnc_syncedTime = { time };
 };
 
+/** TODO 
+[] spawn {
+	waitUntil {!isNil "BIS_WL_arsenalSetupDone"};
+	call BIS_fnc_WLArsenalFilter;
+};
+ */
+
 /******************************************************
 ***********		Init Common Globals			***********
 ******************************************************/
 
 OWL_competingSides = [[WEST, EAST], [WEST, RESISTANCE], [EAST, RESISTANCE]] # (["Combatants"] call BIS_fnc_getParamValue);
 OWL_defendingSide = [RESISTANCE, EAST, WEST, RESISTANCE] # (["Combatants"] call BIS_fnc_getParamValue);
+
 OWL_defendersPlayable = (["DefendersPlayable"] call BIS_fnc_getParamValue) == 1;
-DefendersCanAttack = OWL_defendersPlayable && {(["DefendersCanAttack"] call BIS_fnc_getParamValue) == 1};
 
 OWL_playableSides = +OWL_competingSides;
 if (OWL_defendersPlayable) then { OWL_playableSides pushBack OWL_defendingSide; };
-if (DefendersCanAttack) then { OWL_competingSides pushBack OWL_defendingSide; };
 
+// Variations on these for quicker access in 'draw' handlers.
 OWL_sideColor = createHashMapFromArray [
 	[WEST, [0,0.2,0.8,0.8]],
 	[EAST, [0.8,0.1,0.1,0.8]],
 	[RESISTANCE, [0,0.8,0.2,0.8]]
 ];
 
-#define REENFORCE_ASSET_INDEX_INF 0
-#define REENFORCE_ASSET_INDEX_LAV 1
-#define REENFORCE_ASSET_INDEX_ARM 2
+OWL_sideColorByIndex = [[0,0.2,0.8,0.8],
+					[0.8,0.1,0.1,0.8],
+					[0,0.8,0.2,0.8]];
 
+OWL_sideByIndex = [WEST, EAST, RESISTANCE];
+
+/******************************************************
+***********		Init Config Info			***********
+******************************************************/
+
+// All assets orderable by players.
 OWL_reenforceAssetList = createHashMap;
 private _cfg = missionConfigFile >> "CfgWLSectorAssetPreset" >> "OpenWarlords";
 {
@@ -60,6 +66,7 @@ private _cfg = missionConfigFile >> "CfgWLSectorAssetPreset" >> "OpenWarlords";
 	OWL_reenforceAssetList set [_side, _subArr];
 } forEach (configProperties [(_cfg), "true", true]);
 
+// All loadouts usable by players
 OWL_loadoutRequirements = createHashMap;
 _cfg = missionConfigFile >> "CfgLoadoutCost" >> "OpenWarlords";
 {
@@ -76,7 +83,8 @@ _cfg = missionConfigFile >> "CfgLoadoutCost" >> "OpenWarlords";
 	OWL_loadoutRequirements set [_side, _arr];
 } forEach (configProperties [_cfg, "true", true]);
 
-private _confgGroups = [configFile >> "CfgGroups" >> "WEST" >> "BLU_F" >> "Infantry", configFile >> "CfgGroups" >> "EAST" >> "OPF_F" >> "Infantry", configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Infantry"];
+// TODO: JUNK!! Temp arrays for spawning random AI to protect sectors.
+private _confgGroups = [configFile >> "CfgGroups" >> "WEST" >> "BLU_F" >> "Mechanized", configFile >> "CfgGroups" >> "EAST" >> "OPF_F" >> "Mechanized", configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Mechanized"];
 private _factions = [WEST, EAST, INDEPENDENT];
 OWL_unitGroupMap = createHashMap;
 {

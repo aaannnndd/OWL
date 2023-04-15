@@ -62,3 +62,35 @@ OWL_fnc_sectorLinkedWithBase = {
 	_sector call fnc_search;
 	_base in _visited;
 };
+
+OWL_fnc_log = {
+	private _msg = "[OWL] " + _this#0;
+	if (OWL_devMode && hasInterface) then {
+		systemChat _msg;
+	};
+	diag_log _msg;
+};
+
+/* Checks if sector is seizable for a given side */
+OWL_fnc_sectorSeizableForSide = {
+	params ["_sector", "_side"];
+	
+	private _sideIndex = OWL_competingSides find _side;
+
+	if ((_sector getVariable "OWL_sectorProtected") && !(_sector != OWL_contestedSector # _sideIndex)) exitWith {
+		false;
+	};
+
+	true;
+};
+
+/* Check if a sector is seizable for anyone */
+OWL_fnc_sectorSeizable= {
+	params ["_sector"];
+	
+	if ((_sector getVariable "OWL_sectorProtected") && !(_sector in OWL_contestedSector)) exitWith {
+		false;
+	};
+
+	true;
+};

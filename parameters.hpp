@@ -34,4 +34,6 @@ class Params
 		texts[] = {"Disabled", "Enabled"};
 		default = 1;
 	};
+
+	#include "\a3\Functions_F_Heli\Params\paramViewDistance.inc"
 };

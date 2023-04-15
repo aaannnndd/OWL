@@ -28,4 +28,4 @@ OWL_IDC_COUNTER = [];
 private _currentTab = uiNamespace getVariable ["OWL_UI_lastTab", 1];
 private _ctrlButton = _display displayCtrl (100 + _currentTab);
 
-_ctrlButton execVM "Client\GUI\WarlordsMenu\MENU_TAB_CLICK.sqf";
+_ctrlButton execVM "Client\GUI\WarlordsMenu\menuTabClicked.sqf";

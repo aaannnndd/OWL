@@ -25,7 +25,7 @@ class RscTabButton: RscButton
 	colorDisabled[] = {1,1,1,1};
 	colorBackgroundDisabled[] = {BACKGROUND_COLOR};
 	colorText[] = {1, 1, 1, 0.3};
-	onButtonClick = "_this execVM 'Client\GUI\WarlordsMenu\MENU_TAB_CLICK.sqf'";
+	onButtonClick = "_this execVM 'Client\GUI\WarlordsMenu\menuTabClicked.sqf'";
 };
 
 class RscMenuTitle: RscText
@@ -45,7 +45,7 @@ class RscMenuTitle: RscText
 class RscTabbedMenu
 {
 	idd = 10655;
-	onLoad = "_this execVM 'Client\GUI\WarlordsMenu\MENU_OPEN.SQF'";
+	onLoad = "_this execVM 'Client\GUI\WarlordsMenu\menuOpened.sqf'";
 };
 
 class RscListNBoxFix: RscListNBox
@@ -96,6 +96,6 @@ class RscTitles
 		fadein = 0;
 		fadeout = 1;
 		duration = 1e+011;
-		onLoad = "_this execVM 'Client\GUI\HUD.sqf'";
+		onLoad = "_this execVM 'Client\GUI\initHUD.sqf'";
 	};
 };

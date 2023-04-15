@@ -4,7 +4,11 @@ OWL_playerInitialized = false;
 OWL_fnc_sectorLocationName = compileFinal preprocessFileLineNumbers "Client\sectorLocationName.sqf";
 OWL_fnc_eventAnnouncer = compileFinal preprocessFileLineNumbers "Client\eventAnnouncer.sqf";
 OWL_fnc_updateSectorMarker = compileFinal preprocessFileLineNumbers "Client\sectorMarkerUpdate.sqf";
+OWL_fnc_toggleMenu = compileFinal preprocessFileLineNumbers "Client\GUI\menuToggle.sqf";
 call compileFinal preprocessFileLineNumbers "Client\serverResponse.sqf";
+call compileFinal preprocessFileLineNumbers "Client\initGUIFunctions.sqf";
+
+OWL_key_menu = 22;
 
 waitUntil { missionNamespace getVariable ["OWL_serverInitialized", false] };
 waitUntil { !isNull player };
@@ -15,15 +19,15 @@ waitUntil { local player };
 ***********		Part 1: Preparing GUI and other local stuff		***********
 **************************************************************************/
 
+remoteExec ["OWL_fnc_ICS", 2];
+waitUntil { OWL_playerInitialized };
+
 player addMPEventHandler ["MPRespawn", {
 	params ["_unit", "_corpse"];
 
-	// Open the fast travel menu.
-	//uiNamespace setVariable ["OWL_UI_lastTab", 1];
-	//execVM "Client\GUI\UI_COMMAND_MENU.sqf";
 }];
 
-/* "Disables" command view
+/* "Disables" command view - find a nicer way, maybe make it a serverparam.
 [] spawn {
 	while {TRUE} do {
 		sleep 0.1;
@@ -40,6 +44,7 @@ player addMPEventHandler ["MPRespawn", {
 waitUntil { !isNull (findDisplay 46) };
 waitUntil { playerSide == side group player };
 
+// Create sector markers, localize the sector names.
 {
 	private _sectorIndex = _forEachIndex;
 	private _sectorName = _x getVariable ["OWL_sectorParam_name", ""];
@@ -56,67 +61,27 @@ waitUntil { playerSide == side group player };
 	
 } forEach OWL_allSectors;
 
-[] spawn {
-	waitUntil {!isNull findDisplay 46};
-	sleep 2;
+call compileFinal preprocessFileLineNumbers "Client\GUI\initGUI.sqf";
+
+// Add event handler for the warlords menu.
+0 spawn {
+	sleep 1;
 	(findDisplay 46) displayAddEventHandler ["KeyUp", {
 		_key = _this # 1;
-		if (_key == 22) then {
-			execVM "Client\GUI\UI_COMMAND_MENU.sqf";
+		if (_key == OWL_key_menu) then {
+			call OWL_fnc_toggleMenu;
 		};
 	}];
 };
-
-[] execVM "Client\GUI\initGUI.sqf";
-
-("OWL_hudLayer" call BIS_fnc_rscLayer) cutRsc ["OWL_RscMainHUD", "PLAIN"];
 
 /******************************************************
 ***********			Finishing up 			***********
 ******************************************************/
 
-remoteExec ["OWL_fnc_ICS", 2];
-waitUntil { OWL_playerInitialized };
-
-[] spawn {
-	for "_i" from 0 to 10 do {
-		sleep 10;
-		systemChat "Press 'U' to open the menu";
-	};
-};
-
-player addEventHandler ["HandleRating", {
-	params ["_unit", "_rating"];
-
-	private _pts = _rating / 20;
-	
-	systemChat format ["%1 points awarded for killing an enemy.", _pts];
-}];
-
-addMissionEventHandler ["HandleChatMessage", {
-	params ["_channel", "_owner", "_from", "_text", "_person", "_name", "_strID", "_forcedDisplay", "_isPlayerMessage", "_sentenceType", "_chatMessageType"];
-
-	_block = false;
-
-	if (_channel == 16) then {
-		if ( ["forced respawn",_text] call BIS_fnc_inString ) then {
-			_block = true;
-		};
-		if ( ["incapacitated",_text] call BIS_fnc_inString ) then {
-			_block = true;
-		};
-		if ( ["connected",_text] call BIS_fnc_inString ) then {
-			_block = true;
-		};
-	};
-	_block;
-}];
+call compileFinal preprocessFileLineNumbers "Client\clientEventHandlers.sqf";
+call compileFinal preprocessFileLineNumbers "Client\initPlayerTracking.sqf";
 
 ["Client initialization finished"] call OWL_fnc_log;
-
-/******************************************************
-***********		Check the game state		***********
-******************************************************/
 
 
 

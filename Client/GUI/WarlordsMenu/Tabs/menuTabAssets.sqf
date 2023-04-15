@@ -197,7 +197,7 @@ OWL_fnc_UI_AssetTab_onLocationSelected = {
 
 	_selected_label ctrlSetStructuredText parseText format ["<t size='1' align='center' valign='middle'>Dispatch Location: <t size='1' color='%2'>%1</t></t>", _sector getVariable "OWL_sectorName", ["#0000ff", "#ff0000", "#00ff00"] select ([WEST, EAST, RESISTANCE] find (_sector getVariable "OWL_sectorSide"))];
 	_airdrop_button ctrlSetText toUpper (_sector getVariable "OWL_sectorName");
-	_airdrop_button ctrlEnable (OWL_UI_FLOATING_FUNDS >= 0);
+	_airdrop_button ctrlEnable (OWL_UI_FLOATING_FUNDS >= 0) && ([player, _object] call OWL_fnc_conditionAirdropLocation);
 	uiNamespace setVariable ["OWL_UI_asset_map_last_clicked", _sector];
 
 	// Do the airdrop validity checks

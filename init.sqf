@@ -1,6 +1,3 @@
-
-
-
 OWL_devMode = true;
 
 if (hasInterface || {isServer}) then {

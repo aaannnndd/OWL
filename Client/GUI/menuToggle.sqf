@@ -9,7 +9,7 @@ if (isNull _display) then {
 	uiNamespace setVariable ["OWL_commandMenu", _display];
 	_display displayAddEventHandler ["KeyUp", {
 		_key = _this # 1;
-		if (_key == 22) then {
+		if (_key == OWL_key_menu) then {
 			(uiNamespace getVariable ["OWL_commandMenu", displayNull]) closeDisplay 1;
 			uiNamespace setVariable ["OWL_commandMenu", displayNull];
 		};

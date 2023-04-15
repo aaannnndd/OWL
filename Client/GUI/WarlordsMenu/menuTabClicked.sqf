@@ -42,26 +42,26 @@ uiNamespace setVariable ["OWL_UI_lastTab", _curTab];
 switch (_curTab) do {
 	case 1:
 	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\StrategyTab.sqf';
+		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabStrategy.sqf';
 	};
 	case 2:
 	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\AssetMenu.sqf';
+		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabAssets.sqf';
 	};
+	// case 3:
+	// {
+		// [_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabAssetManagement.sqf';
+	// };
+	// case 4:
+	// {
+		// [_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabCommander.sqf';
+	// };
 	case 3:
 	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\AssetManagementTab.sqf';
+		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabGeneral.sqf';
 	};
-	case 4:
-	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\CommanderTab.sqf';
-	};
-	case 5:
-	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\GeneralMenu.sqf';
-	};
-	case 7:
-	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\OptionsMenu.sqf';
-	};
+	// case 7:
+	// {
+		// [_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabOptions.sqf';
+	// };
 };

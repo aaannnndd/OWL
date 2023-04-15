@@ -1,43 +1,24 @@
-OWL_fnc_updateSpawnPoints = compileFinal preprocessFileLineNumbers "Server\updateSpawnPoints.sqf";
-OWL_fnc_initSectors = compileFinal preprocessFileLineNumbers "Server\initSectors.sqf";
-OWL_fnc_initVariables = compileFinal preprocessFileLineNumbers "Server\initVariables.sqf";
+OWL_fnc_initSpawnPoints = compileFinal preprocessFileLineNumbers "Server\initSpawnPoints.sqf";
+OWL_fnc_handleSectorSeizing = compileFinal preprocessFileLineNumbers "Server\handleSectorSeizing.sqf";
+OWL_fnc_sectorAreaCheck = compileFinal preprocessFileLineNumbers "Server\sectorAreaCheck.sqf";
+OWL_fnc_handleIncomePayout = compileFinal preprocessFileLineNumbers "Server\handleIncomePayout.sqf";
 
 call compileFinal preprocessFileLineNumbers "Server\serverFunctions.sqf";
 call compileFinal preprocessFileLineNumbers "Server\clientRequests.sqf";
 
-call OWL_fnc_initSectors;
-call OWL_fnc_initVariables;
+call compileFinal preprocessFileLineNumbers "Server\initSectors.sqf";
 
-call compileFinal preprocessFileLineNumbers "Server\incomePPM.sqf";
+/******************************************************
+***********			Variable Init			***********
+******************************************************/
 
+/* SERVERSIDE ONLY */
 OWL_persistentData = createHashMap;
 OWL_allWarlords = createHashMap;
 OWL_inAreaZRList = [];
-
-OWL_contestedSector = [objNull, objNull];
-OWL_gameState = ["",""];
-publicVariable "OWL_gameState";
 OWL_sectorVoteList = [[],[]];
 OWL_bankFunds = [0,0];
-
 OWL_voteTrigger = [false, false];
-
-// garbage for testing
-OWL_loadoutProgress = [[0,0,0,0,0,0],[0,0,0,0,0,0]];
-OWL_loadouts = [
-	[],
-	[],
-	[],
-	[],
-	[]
-];
-
-publicVariable "OWL_contestedSector";
-
-/*
-	These are static arrays with the proper data - I think this is more performant than looking-up the 
-	Area, Bordersize, and Position every loop.
-*/
 
 OWL_sectorPositionMatrix = [];
 OWL_sectorAreaMatrix = [];
@@ -52,18 +33,44 @@ OWL_sectorAreaBorderMatrix = [];
 	OWL_sectorAreaBorderMatrix pushBack (_area apply {_x + _border});
 } forEach OWL_allSectors;
 
+/* PUBLIC VARIABLES */
+OWL_contestedSector = [objNull, objNull];
+publicVariable "OWL_contestedSector";
+
+OWL_gameState = ["",""];
+publicVariable "OWL_gameState";
+
+/******************************************************
+***********			Init Finalized			***********
+******************************************************/
+
 call compileFinal preprocessFileLineNumbers "Server\serverEventHandlers.sqf";
 
+// Allow clients to request initialization
 missionNamespace setVariable ["OWL_serverInitialized", true, true];
 ["Server initialization finished"] call OWL_fnc_log;
 
-{
-	_x call OWL_fnc_initSectorVote;
-} forEach OWL_competingSides;
+// Init voting for the first sector
+{_x call OWL_fnc_initSectorVote} forEach OWL_competingSides;
 
-[] spawn {
-	while {TRUE} do {
+/*
+	From here on out, the server updates clients CP once per minute, and checks
+	the status of sectors being seized, and the zone restrictions they have.
+	
+	Aside from that all the server has to do is recieve requests from clients 
+	triggered through the deliberate actions interacting with the UI. 
+*/
+
+OWL_gameHandle = 0 spawn {
+	private _count = 0;
+	WHILE {TRUE} do {
 		sleep 1;
-		execVM "Server\serverSectorSeizingCheck.sqf";
+		_count = _count + 1;
+
+		call OWL_fnc_sectorAreaCheck;
+
+		if (_count % 60 == 0) then {
+			call OWL_fnc_handleIncomePayout;
+		};
 	};
-};
+}
