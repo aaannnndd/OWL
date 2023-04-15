@@ -1,11 +1,18 @@
 /*
 	The below takes all units, and removes them from the list as each sector is iterated through.
 	This will lessen the amount of checks, as most players are usually at main base or an airfield.
+
+	This is the only constant function call/path of code execution that the server will process (Every 1 second)
+	Optimize this and 'handleSectorSeizing' as much as possible.
+
+	I got it 'working', but not much more.
 */
 
 private _unitsCache = allUnits;
 private _i = 0;
 private _end = count _unitsCache;
+
+// Combine both loops eventually. Original idea no longer makes sense with how ZR got set up
 
 while {_i < _end} do {
 	private _unit = (_unitsCache # _i);
@@ -24,17 +31,8 @@ while {_i < _end} do {
 	_i = _i + _inc;
 };
 
-/*
-	These are the map/array we will operate on to do seizing calculations and zone restriction kill timers.
-*/
-
 private _inAreaHashMap = createHashMap;
 private _inAreaZRList = [];
-
-/*
-	The below takes all units, and removes them from the list as each sector is iterated through.
-	This will lessen the amount of checks, as most players are usually at main base or an airfield.
-*/
 
 _end = (count _unitsCache);
 {
@@ -56,7 +54,7 @@ _end = (count _unitsCache);
 		   the unit cache. Main bases are index 0 and 1 in OWL_allSectors, so the list should shrink
 		   very quickly, and less and less checks must happen.
 
-		   *Improvements could be attained through an 'isPlayer' check when dealing with zone restrictions.
+		   *Improvements could be attained through an 'isPlayer' check/laze eval when dealing with zone restrictions.
 		    This is unless we want to kill AI, which is currently lacking. (However move commands path them
 			through cities so it's probably neccessary).
 			Additionally, lazy evaluation might slow things down.
@@ -103,7 +101,7 @@ _end = (count _unitsCache);
 } forEach OWL_sectorPositionMatrix;
 
 
-/* Players who were in restricted zones, but now are now.
+/* Players who were in restricted zones, but now are no longer.
    Potential improvement looping through old list, and 
    check if unit is in new list, instead of arrayDifference */
 {

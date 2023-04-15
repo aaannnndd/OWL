@@ -3,7 +3,7 @@
 params ["_display"];
 
 uiNamespace setVariable ["OWL_UI_requestCooldown", serverTime];
-OWL_UI_FLOATING_FUNDS = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
+OWL_UI_menuDummyFunds = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
 
 private _background = _display ctrlCreate ["RscText", 98];
 _background ctrlSetPosition [safezoneX, safezoneY+(safezoneH/25)*4, safezoneW, safezoneH-(safezoneH/25)*8];

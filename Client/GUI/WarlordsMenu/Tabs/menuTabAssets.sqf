@@ -1,16 +1,11 @@
 params ["_display", "_tabIdx"];
 
-// All IDC's must be 1xxx
-// //text getTextWidth [font, size]
-
 if (!isNull (_display displayCtrl _tabIdx * 1000)) exitWith {};
 
 _pos = ctrlPosition (_display displayCtrl 98);
 _pos params ["_xrel", "_yrel", "_wrel", "_hrel"];
 _wb = _wrel / 40;
 _hb = _hrel / 25;
-
-// This is 'temporariy' value to play with on the UI.
 
 /**********************************************/
 /**************[UI Logic Events]***************/
@@ -67,6 +62,7 @@ OWL_fnc_UI_AssetTab_onAirdropButtonClick = {
 	[_assets, _type, _target] call OWL_fnc_UI_AssetRequestTriggered;
 };
 
+// Todo: put this in config class/localization strings
 OWL_CATEGORY_INFO = createHashMapFromArray [
 	["Aircraft", "Requesting aircraft requires control of a sector with the proper disposition (Helipad/Runway). Aircraft will be delivered to the selected sector upon purchase"],
 	["Infantry", "You may have a squad of up to 6 soldiers which you can command. Requested infantry will be airdropped to the selected location."],
@@ -125,7 +121,7 @@ OWL_fnc_UI_checkAssetRequirements = {
 
 	_errorCode = 0;
 
-	if (_cost > OWL_UI_FLOATING_FUNDS) then {
+	if (_cost > OWL_UI_menuDummyFunds) then {
 		_errorCode = _errorCode + 1;
 	};
 
@@ -161,7 +157,7 @@ OWL_fnc_UI_AssetTab_onItemSelected = {
 		// ???
 	};
 
-	_class call OWL_fnc_updateAssetPreview;
+	_class call OWL_fnc_UI_AssetTab_updateAssetPreview;
 
 	private _category_list = uiNamespace getVariable ["OWL_UI_asset_list_category", controlNull];
 	private _idx = lbCurSel _category_list;
@@ -197,7 +193,7 @@ OWL_fnc_UI_AssetTab_onLocationSelected = {
 
 	_selected_label ctrlSetStructuredText parseText format ["<t size='1' align='center' valign='middle'>Dispatch Location: <t size='1' color='%2'>%1</t></t>", _sector getVariable "OWL_sectorName", ["#0000ff", "#ff0000", "#00ff00"] select ([WEST, EAST, RESISTANCE] find (_sector getVariable "OWL_sectorSide"))];
 	_airdrop_button ctrlSetText toUpper (_sector getVariable "OWL_sectorName");
-	_airdrop_button ctrlEnable (OWL_UI_FLOATING_FUNDS >= 0) && ([player, _object] call OWL_fnc_conditionAirdropLocation);
+	_airdrop_button ctrlEnable (OWL_UI_menuDummyFunds >= 0) && ([player, _object] call OWL_fnc_conditionAirdropLocation);
 	uiNamespace setVariable ["OWL_UI_asset_map_last_clicked", _sector];
 
 	// Do the airdrop validity checks
@@ -249,10 +245,10 @@ OWL_fnc_UI_AssetTab_onQueueRemove = {
 		(OWL_ASSET_INFO get _item) params ["_name", "_cost", "_requirements"];
 		_cost call OWL_fnc_UI_AssetTab_onCPChanged;
 
-		if (OWL_UI_FLOATING_FUNDS >= 0) then {
+		if (OWL_UI_menuDummyFunds >= 0) then {
 			(uiNamespace getVariable ["OWL_UI_asset_button_airdrop_location", controlNull]) ctrlEnable !isNull (uiNamespace getVariable ["OWL_UI_asset_map_last_clicked", objNull]);
 			// TODO: adjust this for 'self airdrop' cost. Elsewhere as well.
-			(uiNamespace getVariable ["OWL_UI_asset_button_airdrop_self", controlNull]) ctrlEnable (OWL_UI_FLOATING_FUNDS > 1000);
+			(uiNamespace getVariable ["OWL_UI_asset_button_airdrop_self", controlNull]) ctrlEnable (OWL_UI_menuDummyFunds > 1000);
 		};
 	};
 };
@@ -301,7 +297,7 @@ OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {
 
 	(OWL_ASSET_INFO get _asset) params ["_name", "_cost", "_requirements"];
 
-	if (OWL_UI_FLOATING_FUNDS - _cost < 0) exitWith {
+	if (OWL_UI_menuDummyFunds - _cost < 0) exitWith {
 		_button ctrlEnable false;
 	};
 
@@ -309,7 +305,7 @@ OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {
 	_button_remove_queue ctrlEnable true;
 
 	_button_airdrop_loc	ctrlEnable !isNull (uiNamespace getVariable ["OWL_UI_asset_map_last_clicked", objNull]);
-	_button_airdrop_self ctrlEnable (OWL_UI_FLOATING_FUNDS - _cost >= 1000);
+	_button_airdrop_self ctrlEnable (OWL_UI_menuDummyFunds - _cost >= 1000);
 
 	_asset_queue lbAdd _name;
 	_asset_queue lbSetData [lbSize _asset_queue - 1, _asset];
@@ -329,33 +325,14 @@ OWL_fnc_UI_AssetTab_onSectorChanged = {
 	// 
 };
 
-OWL_fnc_hasAssetRequirement = {
-	params ["_side", "_requirement"];
-	private _success = false;
-	{
-		private _satisfied = (_x getVariable "OWL_sectorSide" == _side) && (_requirement in (_x getVariable "OWL_sectorParam_assetRequirements"));
-		if (_satisfied) then {
-			_success = true;
-			break;
-		};
-	} forEach OWL_allSectors;
-	_success;
-};
-
-OWL_fnc_getAssetRequirementName = {
-	params ["_requirement"];
-
-	["Runway", "Harbor", "Helipad"] select (["A", "W", "H"] find _requirement);
-};
-
-OWL_fnc_updateAssetPreview = {
+OWL_fnc_UI_AssetTab_updateAssetPreview = {
 	params ["_class"];
 
 	private _queue_button = uiNamespace getVariable ["OWL_UI_asset_button_request", controlNull];
 	private _asset_label_details_display = uiNamespace getVariable ["OWL_UI_asset_label_details_display", controlNull];
 
 	if (isNull _queue_button || isNull _asset_label_details_display) exitWith {
-		systemChat "OWL_fnc_updateAssetPreview: controlNull";
+		systemChat "OWL_fnc_UI_AssetTab_updateAssetPreview: controlNull";
 	};
 	
 	private _name = "";
@@ -380,7 +357,7 @@ OWL_fnc_updateAssetPreview = {
 		if (_cost == 0) then {
 			_fmtBlock = _fmtBlock + "<t size='1' align='center' valign='middle'>Free<br/>%2<br/>";
 		} else {
-			if (_cost > OWL_UI_FLOATING_FUNDS) then {
+			if (_cost > OWL_UI_menuDummyFunds) then {
 				_fmtBlock = _fmtBlock + "<t size='1' align='center' valign='middle', color='#ff0000'>%3 CP<br/>%2<br/>";
 				_queue_button ctrlEnable false;
 			} else {
@@ -514,7 +491,7 @@ _menu_asset_header ctrlCommit 0;
 private _menu_asset_footer = _display ctrlCreate ["RscStructuredText", _tabIdx call OWL_fnc_TabIDC];
 _menu_asset_footer ctrlSetPosition [_xrel, _yrel+_hb*23, _wb*40, _hb*2];
 _menu_asset_footer ctrlSetBackgroundColor [0,0,0,0.2];
-_menu_asset_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_FLOATING_FUNDS];
+_menu_asset_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_menuDummyFunds];
 _menu_asset_footer ctrlCommit 0;
 
 uiNamespace setVariable ["OWL_UI_asset_menu_footer", _menu_asset_footer];
@@ -857,5 +834,5 @@ _display displayAddEventHandler ["MouseButtonUp", {
 	};
 }];
 
-"" call OWL_fnc_updateAssetPreview;
+"" call OWL_fnc_UI_AssetTab_updateAssetPreview;
 _asset_list_category lbSetCurSel 0;

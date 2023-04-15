@@ -32,7 +32,7 @@ OWL_fnc_srInitClient = {
 OWL_fnc_srSectorSeized = {
 	params ["_sector", "_oldSide", "_newSide"];
 
-	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	_sector call OWL_fnc_updateSectorMarker;
 	// Do UI updates.
@@ -61,6 +61,7 @@ OWL_fnc_srCaptureUpdate = {
 	params ["_sector", "_progress", "_endTime", "_capFor", "_capVelocity"];
 
 	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	systemChat format ["Capture Progress Update: %1. Remaining: %2 (%5/120), CappingFor: %3, CapVelocity: %4", _sector getVariable "OWL_sectorName", _endTime-serverTime, _capFor, _capVelocity, _progress];
 
@@ -86,6 +87,7 @@ OWL_fnc_srCPUpdate = {
 	params ["_amount"];
 
 	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	private _diff = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
 	_diff = _amount - _diff;
@@ -99,7 +101,7 @@ OWL_fnc_srCPUpdate = {
 	// TODO
 	with uiNamespace do {
 		if (!isNil {OWL_UI_strategy_menu_footer}) then {
-			OWL_UI_strategy_menu_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", missionNamespace getVariable "OWL_UI_FLOATING_FUNDS"];
+			OWL_UI_strategy_menu_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", missionNamespace getVariable "OWL_UI_menuDummyFunds"];
 			OWL_UI_strategy_menu_footer ctrlCommit 0;
 		};
 	};
@@ -152,17 +154,13 @@ OWL_fnc_srFastTravel = {
 		titleCut ["", "BLACK IN", 0.5];
 		uiNamespace setVariable ["OWL_UI_blockMenu", FALSE];
 	};
-
-	execVM "Client\GUI\UI_COMMAND_MENU.sqf";
 };
 
 /* Client recieves notification to do the sector scans */
 OWL_fnc_srSectorScan = {
 	params ["_sector", "_endTime"];
 
-	if (remoteExecutedOwner != 2) exitWith {
-		[format ["Client recieved response remoteExec from non-server client: %1", remoteExecutedOwner]] call OWL_fnc_log;
-	};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	"BIS_WL_Scan_WEST" call OWL_fnc_eventAnnouncer;
 	format ["INCOMING SECTOR SCAN: %1", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
@@ -297,6 +295,7 @@ OWL_fnc_crPurchaseReenforcements = {
 	};
 };
 
+// Tells player voting is now available
 OWL_fnc_srSectorVoteNotify = {
 	if (!OWL_playerInitialized) exitWith {};
 	
@@ -305,23 +304,31 @@ OWL_fnc_srSectorVoteNotify = {
 	-1 call OWL_fnc_UI_hudUpdateVoting;
 };
 
+// Tells client to update their vote count for each sector
 OWL_fnc_srSectorVoteUpdate = {
 	if (!OWL_playerInitialized) exitWith {};
 
 	-1 call OWL_fnc_UI_hudUpdateVoting;	
 };
 
+// Tells client to start their timer for the vote period
 OWL_fnc_srSectorVoteInit = {
-	if (!OWL_playerInitialized) exitWith {};
-
 	params ["_endTime"];
+
+	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
+
 	_endTime call OWL_fnc_UI_hudUpdateVoting;
 };
 
-OWL_srZoneRestrictTimer = {
-	if (!OWL_playerInitialized) exitWith {};
 
+// Tells client they will be killed at '_endTime' if they don't leave the sector.
+// -1 = you're good now, get rid of the warning
+OWL_srZoneRestrictTimer = {
 	params ["_endTime"];
+
+	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	private _handle = missionNamespace getVariable ["OWL_zrHandle", scriptNull];
 
@@ -370,9 +377,10 @@ OWL_srZoneRestrictTimer = {
 };
 
 OWL_fnc_srSectorSelected = {
-	if (!OWL_playerInitialized) exitWith {};
-
 	params ["_side", "_sector"];
+
+	if (!OWL_playerInitialized) exitWith {};
+	if (remoteExecutedOwner != 2) exitWith {};
 
 	if (_side == playerSide) then {
 		"BIS_WL_Selected_WEST" call OWL_fnc_eventAnnouncer;

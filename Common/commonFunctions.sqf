@@ -94,3 +94,22 @@ OWL_fnc_sectorSeizable= {
 
 	true;
 };
+
+OWL_fnc_hasAssetRequirement = {
+	params ["_side", "_requirement"];
+	private _success = false;
+	{
+		private _satisfied = (_x getVariable "OWL_sectorSide" == _side) && (_requirement in (_x getVariable "OWL_sectorParam_assetRequirements"));
+		if (_satisfied) then {
+			_success = true;
+			break;
+		};
+	} forEach OWL_allSectors;
+	_success;
+};
+
+OWL_fnc_getAssetRequirementName = {
+	params ["_requirement"];
+
+	["Runway", "Harbor", "Helipad"] select (["A", "W", "H"] find _requirement);
+};

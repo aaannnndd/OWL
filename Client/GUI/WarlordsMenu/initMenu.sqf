@@ -18,6 +18,8 @@ uiNamespace setVariable ["OWL_UI_lastTab", 1];
 OWL_ASSET_LIST = createHashMap;
 OWL_ASSET_INFO = createHashMap;
 
+OWL_UI_menuDummyFunds = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
+
 OWL_MENU_TABS = [
 	"Strategy",
 	"Assets",

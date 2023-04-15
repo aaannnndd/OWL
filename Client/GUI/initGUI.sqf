@@ -376,8 +376,8 @@ OWL_fnc_UI_AssetTab_onCPChanged = {
 
 	if (isNull _asset_list_items || isNull _request_button) exitWith {};
 
-	OWL_UI_FLOATING_FUNDS = missionNamespace getVariable ["OWL_UI_FLOATING_FUNDS", uiNamespace getVariable ["OWL_UI_dummyFunds", 0]];
-	OWL_UI_FLOATING_FUNDS = OWL_UI_FLOATING_FUNDS + _amount;
+	OWL_UI_menuDummyFunds = missionNamespace getVariable ["OWL_UI_menuDummyFunds", uiNamespace getVariable ["OWL_UI_dummyFunds", 0]];
+	OWL_UI_menuDummyFunds = OWL_UI_menuDummyFunds + _amount;
 
 	for "_i" from 0 to (lbSize _asset_list_items - 1) do {
 		_class = _asset_list_items lbData _i;
@@ -400,7 +400,7 @@ OWL_fnc_UI_AssetTab_onCPChanged = {
 	};
 
 	_menu_asset_footer = uiNamespace getVariable ["OWL_UI_asset_menu_footer", controlNull];
-	_menu_asset_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_FLOATING_FUNDS];
+	_menu_asset_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_menuDummyFunds];
 };
 
 addMissionEventHandler ["Draw3D", {

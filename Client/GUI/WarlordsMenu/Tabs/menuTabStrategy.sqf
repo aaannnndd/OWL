@@ -157,7 +157,7 @@ _menu_strategy_header ctrlCommit 0;
 private _menu_strategy_footer = _display ctrlCreate ["RscStructuredText", _tabIdx call OWL_fnc_TabIDC];
 _menu_strategy_footer ctrlSetPosition [_xrel, _yrel+_hb*23, _wb*40, _hb*2];
 _menu_strategy_footer ctrlSetBackgroundColor [0,0,0,0.2];
-_menu_strategy_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_FLOATING_FUNDS];
+_menu_strategy_footer ctrlSetStructuredText parseText format ["<t size='0.25'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>%1 CP, Harbor, 6 Recruits Available</t>", OWL_UI_menuDummyFunds];
 _menu_strategy_footer ctrlCommit 0;
 
 uiNamespace setVariable ["OWL_UI_strategy_menu_footer", _menu_strategy_footer];
