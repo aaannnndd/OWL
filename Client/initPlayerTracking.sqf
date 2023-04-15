@@ -16,7 +16,7 @@ addMissionEventHandler ["Map", {
 	if (_mapIsOpened) then {
 		_eh = _main_map ctrlAddEventHandler ["Draw", {
 			{
-				if (_x == player) then {
+				if (_x == player || (side _x != playerSide)) then {
 					continue;
 				};
 				
