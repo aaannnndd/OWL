@@ -81,6 +81,20 @@ OWL_mainBases = [];
 	
 	_trigger enableSimulationGlobal false;
 	deleteVehicle _trigger;
+
+	_assets = [];
+	{
+		_asset = vehicle _x;
+		if (_asset isKindOf "LandVehicle") then {
+			_group = group effectiveCommander _x;
+			_assets pushBack [typeOf _asset, position _asset, direction _asset, _group];
+			{_asset deleteVehicleCrew _x} forEach crew _asset;
+			deleteVehicle _asset;
+		};
+		systemChat str _x;
+	} forEach synchronizedObjects _sector;
+	_sector setVariable ["OWL_sectorAssets", _assets];
+
 } forEach (entities "Logic");
 
 {

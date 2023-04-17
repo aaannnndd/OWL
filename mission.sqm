@@ -5,10 +5,10 @@ class EditorData
 	angleGridStep=0.2617994;
 	scaleGridStep=1;
 	autoGroupingDist=10;
-	toggles=513;
+	toggles=10;
 	class ItemIDProvider
 	{
-		nextID=1119;
+		nextID=1977;
 	};
 	class MarkerIDProvider
 	{
@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=155;
+		nextID=172;
 	};
 	class Camera
 	{
-		pos[]={15844.315,363.8288,16245.834};
-		dir[]={-0.31825146,-0.90841848,-0.27111539};
-		up[]={-0.69151551,0.41806164,-0.58909482};
-		aside[]={-0.64848787,1.0966323e-007,0.76123387};
+		pos[]={9330.4854,138.14935,12043.146};
+		dir[]={-0.85758424,-0.50198978,-0.11210313};
+		up[]={-0.49775624,0.86487353,-0.065066926};
+		aside[]={-0.12961778,1.022272e-007,0.99156958};
 	};
 };
 binarizationWanted=0;
@@ -50,13 +50,14 @@ addons[]=
 	"A3_Structures_F_Mil_Helipads",
 	"A3_Boat_F_Jets_Carrier_01",
 	"A3_Ui_F",
-	"A3_Missions_F_Oldman"
+	"A3_Missions_F_Oldman",
+	"A3_Armor_F_Gamma_APC_Wheeled_03"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=14;
+		items=15;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -152,6 +153,13 @@ class AddonsMetaData
 		{
 			className="A3_Missions_F_Oldman";
 			name="Arma 3 Old Man - Playable Content";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+		class Item14
+		{
+			className="A3_Armor_F_Gamma";
+			name="Arma 3 - Armored Land Vehicles";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
@@ -327,7 +335,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=173;
+		items=181;
 		class Item0
 		{
 			dataType="Group";
@@ -1871,7 +1879,7 @@ class Mission
 			{
 				position[]={26993,21.985922,24662.801};
 			};
-			init="this setVariable [""OWL_sectorParam_canBeBase"", 0];" \n "this setVariable [""OWL_sectorParam_name"", ""@STR_A3_OWL_sector_name_molos_airfield""];" \n "this setVariable [""OWL_sectorParam_useLocationName"", false];" \n "this setVariable [""OWL_sectorParam_side"", 3];" \n "this setVariable [""OWL_sectorParam_income"", 15];" \n "this setVariable [""OWL_sectorParam_fastTravelEnabled"", true];" \n "this setVariable [""OWL_sectorParam_borderSize"", 200]; " \n "this setVariable [""OWL_sectorParam_assetRequirements"", ""AH""]";
+			init="this setVariable [""OWL_sectorParam_canBeBase"", 0];" \n "this setVariable [""OWL_sectorParam_name"", ""@STR_A3_OWL_sector_name_molos_airfield""];" \n "this setVariable [""OWL_sectorParam_useLocationName"", false];" \n "this setVariable [""OWL_sectorParam_side"", 3];" \n "this setVariable [""OWL_sectorParam_income"", 15];" \n "this setVariable [""OWL_sectorParam_fastTravelEnabled"", true];" \n "this setVariable [""OWL_sectorParam_borderSize"", 200]; " \n "this setVariable [""OWL_sectorParam_assetRequirements"", ""AH""];" \n "this setVariable [""OWL_sectorParam_assetCap"", [4,3,40]];";
 			id=478;
 			type="Logic";
 		};
@@ -2785,7 +2793,7 @@ class Mission
 			{
 				position[]={10671.1,16.7052,12247.7};
 			};
-			init="this setVariable [""OWL_sectorParam_canBeBase"", 0];" \n "this setVariable [""OWL_sectorParam_name"", ""@STR_A3_OWL_sector_name_therisa""];" \n "this setVariable [""OWL_sectorParam_useLocationName"", false];" \n "this setVariable [""OWL_sectorParam_side"", 3];" \n "this setVariable [""OWL_sectorParam_income"", 20];" \n "this setVariable [""OWL_sectorParam_fastTravelEnabled"", true];" \n "this setVariable [""OWL_sectorParam_borderSize"", 200]; " \n "this setVariable [""OWL_sectorParam_assetRequirements"", """"]";
+			init="this setVariable [""OWL_sectorParam_canBeBase"", 0];" \n "this setVariable [""OWL_sectorParam_name"", ""@STR_A3_OWL_sector_name_therisa""];" \n "this setVariable [""OWL_sectorParam_useLocationName"", false];" \n "this setVariable [""OWL_sectorParam_side"", 1];" \n "this setVariable [""OWL_sectorParam_income"", 20];" \n "this setVariable [""OWL_sectorParam_fastTravelEnabled"", true];" \n "this setVariable [""OWL_sectorParam_borderSize"", 200]; " \n "this setVariable [""OWL_sectorParam_assetRequirements"", """"]";
 			id=550;
 			type="Logic";
 		};
@@ -5382,8 +5390,8 @@ class Mission
 			dataType="Object";
 			class PositionInfo
 			{
-				position[]={3644.1421,0.061355591,9109.9121};
-				angles[]={0,0.57595867,0};
+				position[]={3008.3779,-2.2718506,13503.592};
+				angles[]={0,1.0511262,-0};
 			};
 			side="Empty";
 			class Attributes
@@ -5392,7 +5400,7 @@ class Mission
 			};
 			id=846;
 			type="Land_Carrier_01_base_F";
-			atlOffset=93.089996;
+			atlOffset=21.335394;
 			class CustomAttributes
 			{
 				class Attribute0
@@ -5496,58 +5504,187 @@ class Mission
 		};
 		class Item172
 		{
-			dataType="Logic";
+			dataType="Group";
+			side="Independent";
+			class Entities
+			{
+				items=3;
+				class Item0
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={4110.5166,47.267872,11696.844};
+						angles[]={6.1716504,3.8804057,0.087773547};
+					};
+					side="Independent";
+					flags=4;
+					class Attributes
+					{
+					};
+					id=1137;
+					type="I_crew_F";
+					atlOffset=-5.7220459e-005;
+				};
+				class Item1
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={4110.2891,49.856037,11696.554};
+						angles[]={6.1716504,3.8804057,0.087773547};
+					};
+					side="Independent";
+					class Attributes
+					{
+					};
+					id=1138;
+					type="I_crew_F";
+					atlOffset=2.6406326;
+				};
+				class Item2
+				{
+					dataType="Object";
+					class PositionInfo
+					{
+						position[]={4110.2891,49.856037,11696.554};
+						angles[]={6.1716504,3.8804057,0.087773547};
+					};
+					side="Independent";
+					flags=2;
+					class Attributes
+					{
+					};
+					id=1139;
+					type="I_crew_F";
+					atlOffset=2.6406326;
+				};
+			};
+			class Attributes
+			{
+			};
+			class CrewLinks
+			{
+				class LinkIDProvider
+				{
+					nextID=3;
+				};
+				class Links
+				{
+					items=3;
+					class Item0
+					{
+						linkID=0;
+						item0=1137;
+						item1=1136;
+						class CustomData
+						{
+							role=1;
+						};
+					};
+					class Item1
+					{
+						linkID=1;
+						item0=1138;
+						item1=1136;
+						class CustomData
+						{
+							role=2;
+							turretPath[]={0};
+						};
+					};
+					class Item2
+					{
+						linkID=2;
+						item0=1139;
+						item1=1136;
+						class CustomData
+						{
+							role=2;
+							turretPath[]={0,0};
+						};
+					};
+				};
+			};
+			id=1135;
+			atlOffset=-5.7220459e-005;
+		};
+		class Item173
+		{
+			dataType="Object";
 			class PositionInfo
 			{
-				position[]={15716.589,11.054345,16137.024};
-				angles[]={6.1874714,0,0.029321531};
+				position[]={4110.2891,49.854599,11696.504};
+				angles[]={6.1716504,3.8804057,0.087773547};
 			};
-			name="asdfg";
-			areaSize[]={125,0,125};
-			flags=1;
-			id=1118;
-			type="ModuleHideTerrainObjects_F";
-			class CustomAttributes
+			side="Independent";
+			flags=6;
+			class Attributes
 			{
-				class Attribute0
-				{
-					property="#filter";
-					expression="_this setVariable [""#filter"",_value]";
-					class Value
-					{
-						class data
-						{
-							singleType="SCALAR";
-							value=2;
-						};
-					};
-				};
-				class Attribute1
-				{
-					property="#hideLocally";
-					expression="_this setVariable [""#hideLocally"",_value]";
-					class Value
-					{
-						class data
-						{
-							singleType="BOOL";
-							value=1;
-						};
-					};
-				};
-				nAttributes=2;
 			};
+			id=1136;
+			type="I_APC_Wheeled_03_cannon_F";
+			atlOffset=-5.7220459e-005;
+		};
+		class Item174
+		{
+			dataType="Layer";
+			name="dock";
+			id=1742;
+			atlOffset=185.97;
+		};
+		class Item175
+		{
+			dataType="Layer";
+			name="Camp Bear";
+			id=1785;
+			atlOffset=185.97;
+		};
+		class Item176
+		{
+			dataType="Layer";
+			name="Camp Bravery";
+			id=1835;
+			atlOffset=185.97;
+		};
+		class Item177
+		{
+			dataType="Layer";
+			name="Camp Courage";
+			id=1888;
+			atlOffset=185.97;
+		};
+		class Item178
+		{
+			dataType="Layer";
+			name="Camp Fortitude";
+			id=1939;
+			atlOffset=185.97;
+		};
+		class Item179
+		{
+			dataType="Layer";
+			name="Roadblock";
+			id=1951;
+			atlOffset=185.97;
+		};
+		class Item180
+		{
+			dataType="Layer";
+			name="Hasty Roadblock";
+			id=1959;
+			atlOffset=185.97;
 		};
 	};
 	class Connections
 	{
 		class LinkIDProvider
 		{
-			nextID=161;
+			nextID=162;
 		};
 		class Links
 		{
-			items=161;
+			items=162;
 			class Item0
 			{
 				linkID=0;
@@ -7153,6 +7290,16 @@ class Mission
 				linkID=160;
 				item0=526;
 				item1=524;
+				class CustomData
+				{
+					type="Sync";
+				};
+			};
+			class Item161
+			{
+				linkID=161;
+				item0=1136;
+				item1=562;
 				class CustomData
 				{
 					type="Sync";

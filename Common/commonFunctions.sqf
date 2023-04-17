@@ -50,6 +50,7 @@ OWL_fnc_sectorLinkedWithBase = {
 	
 	fnc_search = { 
 		params ["_n"];
+		if (typeOf _n != "Logic") exitWith {};
 		if (_n getVariable "OWL_sectorSide" != _side && _n != _sector) exitWith {};
 		if (_n in _visited) exitWith {};
 		if (_base in _visited) exitWith {break};

@@ -61,6 +61,8 @@ missionNamespace setVariable ["OWL_serverInitialized", true, true];
 	triggered through the deliberate actions interacting with the UI. 
 */
 
+OWL_garbageCollector = [];
+
 OWL_gameHandle = 0 spawn {
 	private _count = 0;
 	WHILE {TRUE} do {
@@ -73,4 +75,4 @@ OWL_gameHandle = 0 spawn {
 			call OWL_fnc_handleIncomePayout;
 		};
 	};
-}
+};

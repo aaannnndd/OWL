@@ -88,6 +88,17 @@ OWL_fnc_UI_mapDrawCommon = {
 							if (side group player == WEST) then {2} else {1}
 						];	
 					};
+					private _sector = _x;
+					{
+						private _color = [1,1,1,0.8];
+						if (typeOf _x == "Logic") then {
+							_this select 0 drawLine [
+								getPos _sector,
+								getPos _x,
+								_color
+							];
+						};
+					} forEach (synchronizedObjects _sector);
 				} forEach OWL_allSectors;
 			};
 			{
@@ -249,24 +260,6 @@ _mainMap ctrlAddEventHandler ["Draw", {
 			"right"
 		];
 	};
-
-	{
-		if (side _x == playerSide) then {
-			_this select 0 drawIcon [
-				"\a3\ui_f\data\Map\GroupIcons\selector_selectable_ca.paa",
-				[1,1,1,0.8],
-				getPosASLVisual _x,
-				20,
-				20,
-				0,
-				name _x,
-				1,
-				0.04,
-				"PuristaLight",
-				"right"
-			];
-		};
-	} forEach (call BIS_fnc_listPlayers);
 }];
 
 private _mapDisplay = (findDisplay 12);
@@ -326,7 +319,7 @@ with uiNamespace do {
 			systemChat "Fast travel unavailable.";
 		};
 
-		_cd = uiNamespace getVariable ["OWL_UI_requestCooldown", serverTime];
+		_cd = uiNamespace getVariable ["OWL_UI_requestCooldown", -1];
 		if (_cd - serverTime > 0) exitWith {playSound "AddItemFailed"};
 		uiNamespace setVariable ["OWL_UI_requestCooldown", serverTime+10];
 

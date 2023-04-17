@@ -67,6 +67,8 @@ OWL_fnc_onSectorSeized = {
 
 		_seizedBy call OWL_fnc_initSectorVote;
 	};
+
+	[_sector, _oldSide, _seizedBy] call OWL_fnc_rerouteAI;
 };
 
 /* Called when a vote begins */
@@ -137,4 +139,31 @@ OWL_fnc_protectSector = {
 	if (isNull _sector) exitWith {};
 
 	_sector setVariable ["OWL_sectorProtected", true, TRUE];
+};
+
+/* Tell all remaining AI to do something else */
+OWL_fnc_rerouteAI = {
+	params ["_sector", "_oldSide", "_seizedBy"];
+
+	private _groups = _sector getVariable ["OWL_sectorGroups", []];
+	private _vehicles = _sector getVariable ["OWL_sectorVehicles", []];
+
+	{
+		{
+			deleteWaypoint _x;
+		} forEach waypoints _x;
+
+		// For now just be annoying and rush center of newly capped sector.
+		private _wp = _x addWaypoint [getPosATL _sector, 50];
+		_wp setWaypointType "SAD";
+		_x setCurrentWaypoint _wp;
+	} forEach _groups;
+
+	{
+		{
+			if (!alive _x) then {
+				deleteVehicle _x;
+			};
+		} forEach crew _x;
+	} forEach _vehicles;
 };
