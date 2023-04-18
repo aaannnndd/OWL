@@ -15,8 +15,8 @@ OWL_fnc_ICS = {
 	if (isNull _player) exitWith {[format ["Tried to initialize null player for client %1", _owner]] call OWL_fnc_log};
 
 	private _uid = getPlayerUID _player;
-	// OWL_allWarlords [ownerId, [CommandPoints, OwnedAssets]]
-	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, []]];
+	// OWL_allWarlords [ownerId, [CommandPoints, OwnedAssets, OwnedSquadmates]]
+	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, [], []]];
 	OWL_allWarlords set [_owner, _persistentData];
 
 	_persistentData remoteExec ["OWL_fnc_srInitClient", _owner];
@@ -30,6 +30,9 @@ OWL_fnc_ICS = {
 OWL_fnc_crAirdrop = {
 	params ["_target", "_assets", "_flags"];
 	
+	private _owner = remoteExecutedOwner;
+	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+
 	// TODO
 	// 1). Validate all assets are orderable
 	// 2). Validate price of all assets is affordable
@@ -87,6 +90,7 @@ OWL_fnc_crAirdrop = {
 
 		private _bBox = boundingBoxReal _crate;
 		private _bBoxCenter = (_bbox # 0) vectorAdd (_bBox # 1);
+		_bBoxCenter = [(_bBox#1)#0 + (_bBox#0)#0, (_bBox#1)#1 + (_bBox#0)#1, (_bBox#1)#2];
 		_crate attachTo [_para, _bBoxCenter];
 
 		if (getNumber (configFile >> "CfgVehicles" >> _x >> "transportAmmo") == 0) then {
@@ -146,6 +150,19 @@ OWL_fnc_crAirdrop = {
 
 	/* Server plays this sound */
 	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, _target vectorAdd [0, 0, 100]];
+
+	private _data = OWL_allWarlords getOrDefault [_owner, [0,[],[]]];
+	private _assArr = _data # 1;
+	private _infArr = _data # 2;
+	_assArr append _ownedAssets;
+	_infArr append _squadMates;
+	_data set [1, _assArr];
+	_data set [2, _infArr];
+	OWL_allWarlords set [_owner, _data];
+
+	// Send updated assets to player
+
+	[_ownedAssets, _squadMates] remoteExec ["OWL_fnc_srAirdrop", _owner];
 };
 
 // Client requests to use a loadout

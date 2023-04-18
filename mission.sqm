@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=212;
+		nextID=222;
 	};
 	class Camera
 	{
-		pos[]={15651.738,24.463123,16307.709};
-		dir[]={-0.76455027,-0.48084152,-0.429261};
-		up[]={-0.41928002,0.87680578,-0.23540698};
-		aside[]={-0.48957178,1.7200364e-007,0.87196845};
+		pos[]={3349.2598,121.36561,13432.191};
+		dir[]={-0.86026514,-0.45360744,0.23283444};
+		up[]={-0.43785825,0.89119393,0.11850848};
+		aside[]={0.2612595,1.0424992e-007,0.96528196};
 	};
 };
 binarizationWanted=0;
@@ -48,7 +48,6 @@ addons[]=
 	"A3_Structures_F_Civ_Camping",
 	"A3_Structures_F_Items_Vessels",
 	"A3_Structures_F_Mil_Helipads",
-	"A3_Boat_F_Jets_Carrier_01",
 	"A3_Ui_F",
 	"A3_Missions_F_Oldman",
 	"A3_Armor_F_Gamma_APC_Wheeled_03"
@@ -57,7 +56,7 @@ class AddonsMetaData
 {
 	class List
 	{
-		items=15;
+		items=14;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -137,26 +136,19 @@ class AddonsMetaData
 		};
 		class Item11
 		{
-			className="A3_Boat_F_Jets";
-			name="Arma 3 Jets - Boats and Submersibles";
-			author="Bohemia Interactive";
-			url="https://www.arma3.com";
-		};
-		class Item12
-		{
 			className="A3_Ui_F";
 			name="Arma 3 - User Interface";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item13
+		class Item12
 		{
 			className="A3_Missions_F_Oldman";
 			name="Arma 3 Old Man - Playable Content";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item14
+		class Item13
 		{
 			className="A3_Armor_F_Gamma";
 			name="Arma 3 - Armored Land Vehicles";
@@ -169,8 +161,7 @@ dlcs[]=
 {
 	"Enoch",
 	"Expansion",
-	"Heli",
-	"Jets"
+	"Heli"
 };
 randomSeed=11332886;
 class ScenarioData
@@ -336,7 +327,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=181;
+		items=173;
 		class Item0
 		{
 			dataType="Group";
@@ -5406,40 +5397,6 @@ class Mission
 		};
 		class Item166
 		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={3008.3779,-2.2718506,13503.592};
-				angles[]={0,1.0511262,0};
-			};
-			side="Empty";
-			class Attributes
-			{
-				name="asd";
-			};
-			id=846;
-			type="Land_Carrier_01_base_F";
-			atlOffset=21.335394;
-			class CustomAttributes
-			{
-				class Attribute0
-				{
-					property="allowDamage";
-					expression="_this allowdamage _value;";
-					class Value
-					{
-						class data
-						{
-							singleType="BOOL";
-							value=0;
-						};
-					};
-				};
-				nAttributes=1;
-			};
-		};
-		class Item167
-		{
 			dataType="Marker";
 			position[]={3797.8779,14.679,10314.559};
 			name="respawn_west";
@@ -5448,7 +5405,7 @@ class Mission
 			id=847;
 			atlOffset=0.00040626526;
 		};
-		class Item168
+		class Item167
 		{
 			dataType="Object";
 			class PositionInfo
@@ -5465,7 +5422,7 @@ class Mission
 			id=857;
 			type="VirtualReammoBox_camonet_F";
 		};
-		class Item169
+		class Item168
 		{
 			dataType="Object";
 			class PositionInfo
@@ -5482,7 +5439,7 @@ class Mission
 			id=858;
 			type="VirtualReammoBox_camonet_F";
 		};
-		class Item170
+		class Item169
 		{
 			dataType="Marker";
 			position[]={24784.496,17.132,23149.807};
@@ -5492,7 +5449,7 @@ class Mission
 			id=861;
 			atlOffset=0.00044822693;
 		};
-		class Item171
+		class Item170
 		{
 			dataType="Group";
 			side="East";
@@ -5521,7 +5478,7 @@ class Mission
 			};
 			id=148;
 		};
-		class Item172
+		class Item171
 		{
 			dataType="Group";
 			side="Independent";
@@ -5628,7 +5585,7 @@ class Mission
 			id=1135;
 			atlOffset=-5.7220459e-005;
 		};
-		class Item173
+		class Item172
 		{
 			dataType="Object";
 			class PositionInfo
@@ -5644,55 +5601,6 @@ class Mission
 			id=1136;
 			type="I_APC_Wheeled_03_cannon_F";
 			atlOffset=-5.7220459e-005;
-		};
-		class Item174
-		{
-			dataType="Layer";
-			name="dock";
-			id=1742;
-			atlOffset=185.97;
-		};
-		class Item175
-		{
-			dataType="Layer";
-			name="Camp Bear";
-			id=1785;
-			atlOffset=185.97;
-		};
-		class Item176
-		{
-			dataType="Layer";
-			name="Camp Bravery";
-			id=1835;
-			atlOffset=185.97;
-		};
-		class Item177
-		{
-			dataType="Layer";
-			name="Camp Courage";
-			id=1888;
-			atlOffset=185.97;
-		};
-		class Item178
-		{
-			dataType="Layer";
-			name="Camp Fortitude";
-			id=1939;
-			atlOffset=185.97;
-		};
-		class Item179
-		{
-			dataType="Layer";
-			name="Roadblock";
-			id=1951;
-			atlOffset=185.97;
-		};
-		class Item180
-		{
-			dataType="Layer";
-			name="Hasty Roadblock";
-			id=1959;
-			atlOffset=185.97;
 		};
 	};
 	class Connections

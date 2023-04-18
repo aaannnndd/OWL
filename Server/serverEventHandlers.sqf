@@ -3,7 +3,7 @@
 addMissionEventHandler ["PlayerDisconnected", {
 	params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
 
-	private _info = OWL_allWarlords getOrDefault [_owner, []];
+	private _info = OWL_allWarlords getOrDefault [_owner, [0, [], []]];
 	if (count _info > 0) then {
 		_persistentData set [_uid, _info];
 	};

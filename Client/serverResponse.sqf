@@ -77,9 +77,13 @@ OWL_fnc_srCaptureUpdate = {
 /* Sound plays to know the airdrop was a success. All vehicles spawned serverside. */
 /* Update OWL_ownedAssets for the client via whatever sent over through RE */
 OWL_fnc_srAirdrop = {
+	params ["_assets", "_infantry"];
+
 	if (remoteExecutedOwner != 2) exitWith {
 		[format ["Client recieved response remoteExec from non-server client: %1", remoteExecutedOwner]] call OWL_fnc_log;
 	};
+
+	systemChat format ["Assets successfully dropped: %1. Infantry Dropped: %2.", str _assets, str _infantry];
 
 	"BIS_WL_Airdrop_WEST" call OWL_fnc_eventAnnouncer;
 };

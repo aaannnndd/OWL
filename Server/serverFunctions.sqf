@@ -177,7 +177,7 @@ OWL_fnc_rerouteAI = {
 OWL_fnc_getFunds = {
 	params ["_ownerId"];
 
-	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, []]];
+	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, [], []]];
 	_data#0;
 };
 
@@ -185,7 +185,7 @@ OWL_fnc_getFunds = {
 OWL_fnc_addFunds = {
 	params ["_ownerId", "_amount"];
 
-	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, []]];
+	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, [], []]];
 	private _funds = _data#0;
 
 	_funds = _funds + _amount;
