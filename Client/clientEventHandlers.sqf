@@ -6,6 +6,10 @@ player addEventHandler ["HandleRating", {
 	systemChat format ["%1 points awarded for killing an enemy.", _pts];
 }];
 
+player addEventHandler ["Respawn", { 
+	group player selectLeader player; 
+}];
+
 addMissionEventHandler ["HandleChatMessage", {
 	params ["_channel", "_owner", "_from", "_text", "_person", "_name", "_strID", "_forcedDisplay", "_isPlayerMessage", "_sentenceType", "_chatMessageType"];
 

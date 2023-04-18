@@ -43,20 +43,122 @@ addMissionEventHandler ["PlayerDisconnected", {
 OWL_fnc_crAirdrop = {
 	params ["_target", "_assets", "_flags"];
 	
-	_para = createVehicle [if (_isMan) then {"Steerable_Parachute_F"} else {"B_Parachute_02_F"}, _finalPos, [], 0, "FLY"];
-	_para setPos [_finalPos # 0, _finalPos # 1, if (_isMan) then {50 + random 50} else {150 + random 100}];
-	_para setVariable ["finalPos", _finalPos]; 
+	// TODO
+	// 1). Validate all assets are orderable
+	// 2). Validate price of all assets is affordable
+	// done). For all resupply boxes, duplicate versions can be merged into 1 (double the cargo)
+	// 4). For all Infantry / Vehicles, do position finding + parachute bs.
+	// 5). Adjust player command points
+	// 6). Adjust drop height based on proximity to sectors
+	// 7). Better spread on paradrop units (Very close right now)
+	// 8). Make a better command point transaction system
+	// 9). Send back list of owned vehicles to player
+	// 10). Allow managing assets of owned vehicles/squad
 	
-	_item = group (_this # 0) createUnit [_x, position (_this # 0), [], 0, "NONE"];
+	private _ownedAssets = [];
+	private _squadMates = [];
+	_target = getPosATL _target;
 
+	private _owner = remoteExecutedOwner;
+	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+
+	/* Sort all of our assets into their groups */
+	private _ammoCrates = [];
+	private _ammoCrateCount = [];
+	private _infantry = [];
+	private _vehicles = [];
 	{
-		_vehicle = createVehicle [_x, position _player, [], 0, "NONE"];
-		//
+		if (_x isKindOf "ReammoBox_F") then {
+			if (getNumber (configFile >> "CfgVehicles" >> _x >> "transportAmmo") == 0) then {
+				if (_x in _ammoCrates) then {
+					private _index = _ammoCrates find _x;
+					_ammoCrateCount set [_index, (_ammoCrateCount # _index) + 1];
+				} else {
+					_ammoCrates pushBack _x;
+					_ammoCrateCount pushBack 1;
+				};
+			} else {
+				_ammoCrates pushBack _x;
+				_ammoCrateCount pushBack 1;			
+			};
+		};
+		if (_x isKindOf "LandVehicle") then {
+			_vehicles pushBack _x;
+		};
+		if (_x isKindOf "Man") then {
+			_infantry pushBack _x;
+		};
+	} forEach _assets;
+
+	/* Combine duplicate ammo crates into a single one with more cargo count */
+	{
+		private _finalPos = _target findEmptyPosition [0, 100, _x];
+		private _crate = createVehicle [_x, _finalPos, [], 0, "CAN_COLLIDE"];
+
+		private _para = createVehicle ["B_Parachute_02_F", _finalPos, [], 0, "FLY"];
+		_para setPos [_finalPos # 0, _finalPos # 1, 100];
+
+		private _bBox = boundingBoxReal _crate;
+		private _bBoxCenter = (_bbox # 0) vectorAdd (_bBox # 1);
+		_crate attachTo [_para, _bBoxCenter];
+
+		if (getNumber (configFile >> "CfgVehicles" >> _x >> "transportAmmo") == 0) then {
+			private _crateCount = (_ammoCrateCount#_forEachIndex);
+			private _wpns = getWeaponCargo _crate;
+			private _items = getItemCargo _crate;
+			private _mags = getMagazineCargo _crate;
+			private _back = getBackpackCargo _crate;
+
+			{
+				_crate addWeaponCargoGlobal [_x, ((_wpns#1)#_forEachIndex)*_crateCount];
+			} forEach (_wpns#0);
+
+			{
+				_crate addItemCargoGlobal [_x, ((_items#1)#_forEachIndex)*_crateCount];
+			} forEach (_items#0);
+
+			{
+				_crate addMagazineCargoGlobal [_x, ((_mags#1)#_forEachIndex)*_crateCount];
+			} forEach (_mags#0);
+
+			{
+				_crate addBackpackCargoGlobal [_x, ((_back#1)#_forEachIndex)*_crateCount];
+			} forEach (_back#0);
+		};
+		_ownedAssets pushBack _crate;
+	} forEach _ammoCrates;
+
+	/* Spawn all of our vehicles */
+	{
+		private _finalPos = _target findEmptyPosition [0, 100, _x];
+		private _vehicle = createVehicle [_x, _finalPos, [], 0, "CAN_COLLIDE"];
+
+		private _para = createVehicle ["B_Parachute_02_F", _finalPos, [], 0, "FLY"];
+		_para setPos [_finalPos # 0, _finalPos # 1, 100];
+		_para disableCollisionWith _vehicle;
+		private _bBox = boundingBoxReal _vehicle;
+		private _bBoxCenter = (_bbox # 0) vectorAdd (_bBox # 1);
+		_bBoxCenter = [(_bBox#1)#0 + (_bBox#0)#0, (_bBox#1)#1 + (_bBox#0)#1, (_bBox#1)#2];
+		_vehicle attachTo [_para, _bBoxCenter];
+
+		_ownedAssets pushBack _vehicle;
 	} forEach _vehicles;
 
+	/* Spawn all of our infantry - combine with vehicles if flag is enabled */
+	{
+		private _finalPos = _target findEmptyPosition [0, 100, _x];
+		private _para = createVehicle ["Steerable_Parachute_F", _finalPos, [], 0, "FLY"];
+		_para setPos [_finalPos # 0, _finalPos # 1, 100];
+
+		private _unit = group (_player) createUnit [_x, _target, [], 0, "NONE"];
+		_unit assignAsDriver _para;
+		_unit moveInDriver _para;
+
+		_squadMates pushBack _unit;
+	} forEach _infantry;
 
 	/* Server plays this sound */
-	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, (position _player) vectorAdd [0, 0, 100]];
+	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, _target vectorAdd [0, 0, 100]];
 };
 
 // Client requests to use a loadout

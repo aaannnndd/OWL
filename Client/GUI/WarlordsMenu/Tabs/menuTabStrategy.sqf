@@ -119,7 +119,7 @@ OWL_fnc_UI_updateStrategyLabel = {
 		private _protected = _sector getVariable "OWL_sectorProtected";
 		private _tickets = [_sector, side player] call OWL_fnc_sectorTicketCount;
 
-		private _assets = _sector getVariable "OWL_sectorAssets";
+		private _assets = _sector getVariable "OWL_sectorAssetCount";
 		private _assetLimit = (_sector getVariable "OWL_sectorArea")#0;
 		_assetLimit = _assetLimit * 2;
 		_assetLimit = floor (_assetLimit / 100);

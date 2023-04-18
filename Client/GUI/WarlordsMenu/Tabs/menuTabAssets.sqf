@@ -16,7 +16,7 @@ OWL_fnc_UI_AssetRequestTriggered = {
 
 	systemChat str _this;
 	
-	// send to server.
+	[_location, _assets, _type] remoteExec ["OWL_fnc_crAirdrop", 2];
 };
 
 OWL_fnc_UI_AssetTab_onAssetRequestDecision = {
@@ -45,7 +45,7 @@ OWL_fnc_UI_AssetTab_onAirdropButtonClick = {
 
 	_target = player;
 	// TODO - if localization is added this needs fixing.
-	if (("YOUR LOCATION" in ctrlText _button)) then {
+	if (_button == uiNamespace getVariable ["OWL_UI_asset_button_airdrop_location", controlNull]) then {
 		_sector = uiNamespace getVariable ["OWL_UI_asset_map_last_clicked", objNull];
 		if (isNull _sector) then {
 			systemChat "Error I suck at programming";
@@ -55,7 +55,7 @@ OWL_fnc_UI_AssetTab_onAirdropButtonClick = {
 	};
 
 	_type = "";
-	_infInVehicles = ctrlChecked (uiNamespace getVariable ["_asset__asset_checkbox_place_crew", controlNull]);
+	_infInVehicles = cbChecked  (uiNamespace getVariable ["OWL_UI_asset_checkbox_place_crew", controlNull]);
 	if(_infInVehicles) then {
 		_type = "+";
 	};
@@ -656,9 +656,9 @@ _asset_button_airdrop_self ctrlAddEventHandler ["ButtonClick", OWL_fnc_UI_AssetT
 
 private _asset_checkbox_place_crew = _display ctrlCreate ["RscCheckBox", _tabIdx call OWL_fnc_TABIDC];
 _asset_checkbox_place_crew ctrlSetPosition [_xrel+_wb*32, _yrel+_hb*21, _hb*1, _hb*1];
-_asset_checkbox_place_crew ctrlSetChecked false;
+_asset_checkbox_place_crew cbSetChecked true;
 _asset_checkbox_place_crew ctrlCommit 0;
-uiNamespace setVariable ["_asset__asset_checkbox_place_crew", _asset_checkbox_place_crew];
+uiNamespace setVariable ["OWL_UI_asset_checkbox_place_crew", _asset_checkbox_place_crew];
 
 private _asset_label_checkbox_place_crew = _display ctrlCreate ["RscStructuredText", _tabIdx call OWL_fnc_TabIDC];
 _asset_label_checkbox_place_crew ctrlSetPosition [_xrel+_wb*33, _yrel+_hb*21.1, _hb*8, _hb*1];

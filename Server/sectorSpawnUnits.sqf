@@ -213,7 +213,6 @@ private _numSquads = 0;
 	_sectorVehicles pushBack _veh;
 } forEach _assets;
 
-private _multiplier = 1;
 private _reqs = _sector getVariable "OWL_sectorRequirements";
 if ("H" in _reqs && "A" in _reqs) then {
 	_numArmor = _numArmor + 1;

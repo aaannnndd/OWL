@@ -85,6 +85,12 @@ OWL_fnc_conditionSectorScan = {
 	(_cooldown <= serverTime && (!_protected || (_sectorSide == _side) || (_sector == (OWL_contestedSector # _sideIndex))));
 };
 
+OWL_fnc_subConditionAirdrop = {
+	params ["_player", "_assets"];
+
+	/* Check if have sufficient command points + viable asset list */
+};
+
 /* Check if you can airdrop at specific location */
 OWL_fnc_conditionAirdropLocation = {
 	params ["_player", "_sector", "_assets"];

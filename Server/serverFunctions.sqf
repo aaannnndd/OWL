@@ -49,10 +49,10 @@ OWL_fnc_onSectorSeized = {
 
 	// TODO: sector assets variable is placeholder, do whatever you want.
 	if (!(_oldSide in OWL_competingSides)) then {
-		_sector setVariable ["OWL_sectorAssets", [[],[],[]], TRUE];
+		_sector setVariable ["OWL_sectorAssetCount", [[],[],[]], TRUE];
 	} else {
 		_sector setVariable ["OWL_sectorProtected", false, TRUE];
-		_sector setVariable ["OWL_sectorAssets", [[],[],[]], TRUE];
+		_sector setVariable ["OWL_sectorAssetCount", [[],[],[]], TRUE];
 	};
 
 	_sector setVariable ["OWL_sectorCapInfo", [0, [WEST, EAST, RESISTANCE] find _seizedBy]];

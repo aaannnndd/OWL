@@ -50,6 +50,8 @@ OWL_fnc_srSectorSeized = {
 		};
 	};
 
+	0 call OWL_fnc_UI_hudUpdateCP; 
+
 	with uiNamespace do {
 		OWL_UI_hudSeizingBack ctrlShow false;
 		OWL_UI_hudSeizingBar ctrlShow false;
