@@ -14,7 +14,7 @@ private _boolOptions = [
 	["ambientLife", "Disable Ambient Life (Seagulls, Rabbits, ect)"],
 	["zrAudio", "Disable zone-restrictions air raid siren"],
 	["cfMuted", "Hide chat messages of muted players"],
-	["cfKicks", "Hide vote kick messages"],
+	["cfKicks", "Hide vote kick messages"]
 	//["hideLocation", "Hide your location from team"],
 	//["forceGetIn", "Force AI into vehicle when in range"]
 ];
