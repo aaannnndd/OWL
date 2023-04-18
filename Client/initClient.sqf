@@ -19,6 +19,9 @@ waitUntil { local player };
 ***********		Part 1: Preparing GUI and other local stuff		***********
 **************************************************************************/
 
+OWL_playerMates = [];
+OWL_playerAssets = [];
+
 remoteExec ["OWL_fnc_ICS", 2];
 waitUntil { OWL_playerInitialized };
 

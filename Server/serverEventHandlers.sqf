@@ -5,6 +5,21 @@ addMissionEventHandler ["PlayerDisconnected", {
 
 	private _info = OWL_allWarlords getOrDefault [_owner, [0, [], []]];
 	if (count _info > 0) then {
+
+		private _squadMembers = _info # 2;
+		{
+			if (!isNull _x) then {
+				private _grp = group _x;
+				deleteVehicle _x;
+
+				if (!isNull (_grp) && (count (units _grp) == 0)) then {
+					deleteGroup _grp;
+				};
+			};
+
+		} forEach _squadMembers;
+		_info set [2, []];
+
 		_persistentData set [_uid, _info];
 	};
 

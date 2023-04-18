@@ -23,6 +23,7 @@ OWL_UI_menuDummyFunds = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
 OWL_MENU_TABS = [
 	"Strategy",
 	"Assets",
+	"Asset Management",
 	"Free Jets",
 	"Options"
 ];

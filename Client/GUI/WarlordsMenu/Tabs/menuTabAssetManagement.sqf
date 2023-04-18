@@ -10,9 +10,247 @@ _wb = _wrel / 40;
 _hb = _hrel / 25;
 
 /***********************************************
-***************[               ]***************
-********************************************** */
+***************[ Manage Assets ]****************
+***********************************************/
 
+/*
+	1). Sector Selection to manage a sectors assets / purchase for sector
+	2). Asset management section for personal vehicles.
+	3). Lock/Unlock Asset
+	4). Delete Asset
+	5). Turn on/off Engine
+	6). Turn on/off lights
+	7). Turn on/off Radar
+	8). Add asset to sector re-enforcements.
+	9). Ability to 'take out' vehicles from the sector re-enforcements if you purchased them.
+*/
+
+/*
+	[Squad][Assets]					Sector Name
+
+	[List	]			|		[dropdown sector select]
+	[list	]			|   [asset list]	purchase
+	[list	]			|	[asset list]	asset x/3
+	[list	]			|	[asset list]	asset x/10
+	[delete]			|	[asset list]	asset x/30
+	[lock]				|	[asset list]	
+	[lights]			|		[dropdown menu asset]
+	[radar]				|			[purchase asset]
+	[>>	addtosector >>	|	<< removefromsector	<<		]
+*/
+
+private _asset_mgmt_button_squad = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_squad ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*3, _wb*3.95, _hb*1];
+_asset_mgmt_button_squad ctrlSetStructuredText parseText "Squad";
+_asset_mgmt_button_squad ctrlCommit 0;
+
+private _asset_mgmt_button_assets = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_assets ctrlSetPosition [_xrel+0.5*_wb+_wb*4, _yrel+_hb*3, _wb*4, _hb*1];
+_asset_mgmt_button_assets ctrlSetStructuredText parseText "Assets";
+_asset_mgmt_button_assets ctrlCommit 0;
+
+private _asset_mgmt_asset_list = _display ctrlCreate ["RscListBox", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_asset_list ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*4.25, _wb*8, _hb*7];
+_asset_mgmt_asset_list ctrlSetStructuredText parseText "Assets";
+_asset_mgmt_asset_list ctrlCommit 0;
+
+_asset_mgmt_asset_list lbAdd "Select Squad Or Assets";
+
+uiNamespace setVariable ["OWL_UI_asset_mgmt_asset_list", _asset_mgmt_asset_list];
+
+OWL_fnc_UI_controlCondition = {
+	params ["_asset", "_controlName"];
+
+	private _res = false;
+	switch (_controlName) do {
+		case "delete";
+		{
+			_res = (owner _asset == owner player);
+		};
+		case "lock";
+		{
+			//_asset setVehicleLock !(locked _asset);
+			_res = (owner _asset == owner player);
+		};
+		case "lights";
+		{
+			//_asset setPilotLight !(isLightOn _asset);
+			_res = (owner _asset == owner player);
+		};
+		case "engine";
+		{
+			//_asset engineOn !(isEngineOn _asset);
+			_res = (owner _asset == owner player);
+		};
+		case "radar";
+		{
+			//_asset setVehicleRadar (if (isVehicleRadarOn _asset) then {0} else {1});
+			_res = (owner _asset == owner player);
+		};
+		case "add":
+		{
+			_res = (owner _asset == owner player);
+		};
+	};
+	_res;
+};
+
+_asset_mgmt_asset_list ctrlAddEventHandler ["LBSelChanged", {
+	params ["_list", "_index"];
+
+	private _selected = _list_category lbData _index;
+	_selected = _selected call BIS_fnc_objectFromNetId;
+
+	private _delete = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_delete", controlNull];
+	private _lock = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_lock", controlNull];
+	private _lights = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_lights", controlNull];
+	private _engine = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_engine", controlNull];
+	private _radar = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_radar", controlNull];
+	private _add = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_add", controlNull];
+
+	if (isNull _selected) then {
+		_delete ctrlEnable false;
+		_lock ctrlEnable false;
+		_lights ctrlEnable false;
+		_engine ctrlEnable false;
+		_radar ctrlEnable false;
+		_add ctrlEnable false;
+	} else {
+		_delete ctrlEnable ([_selected, "delete"] call OWL_fnc_UI_controlCondition);
+		_lock ctrlEnable ([_selected, "lock"] call OWL_fnc_UI_controlCondition);
+		_lights ctrlEnable ([_selected, "lights"] call OWL_fnc_UI_controlCondition);
+		_engine ctrlEnable ([_selected, "engine"] call OWL_fnc_UI_controlCondition);
+		_radar ctrlEnable ([_selected, "radar"] call OWL_fnc_UI_controlCondition);
+		_add ctrlEnable ([_selected, "add"] call OWL_fnc_UI_controlCondition);
+	};
+}];
+
+_asset_mgmt_button_squad ctrlAddEventHandler ["ButtonClick", {
+
+	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
+	lbClear _list;
+	private _arr = ((units group player) - [player]);
+	{
+		_list lbAdd getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
+		_list lbSetValue [(lbSize _list) - 1, _forEachIndex];
+		_list lbSetData [(lbSize _list) - 1, netId _x];
+	} forEach _arr;
+	if (count _arr == 0) then {
+		_list lbAdd "No Squad Members";
+	};
+	_list ctrlCommit 0;
+}];
+
+_asset_mgmt_button_assets ctrlAddEventHandler ["ButtonClick", {
+	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
+	lbClear _list;
+	{
+		_list lbAdd format getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
+		_list lbSetValue [(lbSize _list) - 1, _forEachIndex];
+		_list lbSetData [(lbSize _list) - 1, netId _x];
+	} forEach OWL_playerAssets;
+	if (count OWL_playerAssets == 0) then {
+		_list lbAdd "No Owned Assets";
+	};
+	_list ctrlCommit 0;
+}];
+
+_asset_mgmt_asset_list ctrlCommit 0;
+
+_asset_mgmt_button_delete = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_lock = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_lights = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_engine = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_radar = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_add = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+
+_asset_mgmt_button_delete ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*11.5, _wb*3.95, _hb*1];
+_asset_mgmt_button_lock ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*11.5, _wb*4, _hb*1];
+_asset_mgmt_button_lights ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*12.55, _wb*3.95, _hb*1];
+_asset_mgmt_button_engine ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*12.55, _wb*4, _hb*1];
+_asset_mgmt_button_radar ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*13.55, _wb*3.95, _hb*1];
+_asset_mgmt_button_add ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*13.55, _wb*4, _hb*1];
+
+_asset_mgmt_button_delete ctrlSetStructuredText parseText "DELETE";
+_asset_mgmt_button_lock ctrlSetStructuredText parseText "LOCK";
+_asset_mgmt_button_lights ctrlSetStructuredText parseText "LIGHTS";
+_asset_mgmt_button_engine ctrlSetStructuredText parseText "ENGINE";
+_asset_mgmt_button_radar ctrlSetStructuredText parseText "RADAR";
+_asset_mgmt_button_add ctrlSetStructuredText parseText "ADD TO SECTOR";
+
+_asset_mgmt_button_delete ctrlCommit 0;
+_asset_mgmt_button_lock ctrlCommit 0;
+_asset_mgmt_button_lights ctrlCommit 0;
+_asset_mgmt_button_engine ctrlCommit 0;
+_asset_mgmt_button_radar ctrlCommit 0;
+_asset_mgmt_button_add ctrlCommit 0;
+
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_delete", _asset_mgmt_button_delete];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lock", _asset_mgmt_button_lock];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lights", _asset_mgmt_button_lights];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_engine", _asset_mgmt_button_engine];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_radar", _asset_mgmt_button_radar];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_add", _asset_mgmt_button_add];
+
+OWL_fnc_UI_mgmt_getSelected = {
+	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
+	private _selected = lbCurSel _list;
+	_selected = _list lbData _selected;
+	_selected = _selected call BIS_fnc_objectFromNetId;
+	if (!isNull _selected) exitWith {
+		_selected;
+	};
+	objNull;
+};
+
+_asset_mgmt_button_delete ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "delete";
+	};
+}];
+
+_asset_mgmt_button_lock ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "lock";		
+	};
+}];
+
+_asset_mgmt_button_lights ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "lights";		
+	};
+}];
+
+_asset_mgmt_button_engine ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "engine";		
+	};
+}];
+
+_asset_mgmt_button_radar ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "radar";		
+	};
+}];
+
+_asset_mgmt_button_add ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		systemChat str _selected;
+		systemChat "add";
+	};
+}];
+/*
 _owned_asset_map_title = _display ctrlCreate ["RscStructuredText", _tabIdx call OWL_fnc_TabIDC];
 _owned_asset_map_title ctrlSetPosition [_xrel+_wb*0.5, _yrel+_hb*1, _wb*11, _hb*2];
 _owned_asset_map_title ctrlSetStructuredText parseText "<t align='center'>Asset Locations</t>";
@@ -145,4 +383,4 @@ _owned_asset_map ctrlAddEventHandler ["Draw", {
 	} forEach _points;
 
 	_map drawTriangle [_triangle, [1,0,0,0.5], "#(rgb,1,1,1)color(1,1,1,1)"];
-}];
+}];*/

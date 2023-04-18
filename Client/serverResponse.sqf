@@ -11,17 +11,20 @@ OWL_fnc_srInitClient = {
 
 	if (remoteExecutedOwner != 2) exitWith {};
 	
+	OWL_playerMates = []; // should be empty from the start.
+	OWL_playerAssets = _ownedAssets;
+
 	// Client specific info
 	uiNamespace setVariable ["OWL_UI_dummyFunds", _commandPoints];
 	OWL_ownedAssets = _ownedAssets;
 	OWL_sideIndex = OWL_competingSides find playerSide;
 	OWL_playerInitialized = true;
-	"WARLORDS PROTOCOL INITIALIZED" spawn BIS_fnc_WLSmoothText;
+	localize "$STR_A3_OWL_warlords_init" spawn BIS_fnc_WLSmoothText;
 	"BIS_WL_Initialized_WEST" call OWL_fnc_eventAnnouncer;
 
 	if (OWL_gameState # OWL_sideIndex == "voting") then {
 		"BIS_WL_Voting_WEST" call OWL_fnc_eventAnnouncer;
-		"VOTE FOR THE NEXT SECTOR" spawn BIS_fnc_WLSmoothText;
+		localize "$STR_A3_OWL_sector_vote" spawn BIS_fnc_WLSmoothText;
 		0 spawn {
 			sleep 0.25;
 			-1 call OWL_fnc_UI_hudUpdateVoting;
@@ -39,13 +42,13 @@ OWL_fnc_srSectorSeized = {
 
 	if (_oldSide == playerSide) then {
 		"BIS_WL_Lost_WEST" call OWL_fnc_eventAnnouncer;
-		"SECTOR LOST" spawn BIS_fnc_WLSmoothText;
+		localize "$STR_A3_OWL_sector_lost" spawn BIS_fnc_WLSmoothText;
 	} else {
 		if (_newSide != playerSide) then {
 			"THE ENEMY IS ADVANCING" spawn BIS_fnc_WLSmoothText;
-			"BIS_WL_Enemy_Advancing_WEST" call OWL_fnc_eventAnnouncer;		
+			localize "$STR_A3_OWL_enemy_advancing" call OWL_fnc_eventAnnouncer;		
 		} else {
-			"SECTOR SEIZED" spawn BIS_fnc_WLSmoothText;
+			localize "$STR_A3_OWL_sector_seized" spawn BIS_fnc_WLSmoothText;
 			"BIS_WL_Seized_WEST" call OWL_fnc_eventAnnouncer;
 		};
 	};
@@ -85,7 +88,11 @@ OWL_fnc_srAirdrop = {
 
 	systemChat format ["Assets successfully dropped: %1. Infantry Dropped: %2.", str _assets, str _infantry];
 
+	OWL_playerAssets append _assets;
+	//OWL_playerMates append _infantry; all will be put in player squad, don't really need this.
+
 	"BIS_WL_Airdrop_WEST" call OWL_fnc_eventAnnouncer;
+	localize "$STR_A3_OWL_airdrop_incoming" spawn BIS_fnc_WLSmoothText; 
 };
 
 /* Client recives an update for how much money they have available on the server. */
@@ -125,7 +132,7 @@ OWL_fnc_srFastTravel = {
 	
 	titleCut ["", "BLACK OUT", 0.5];
 	"BIS_WL_Fast_Travel_WEST" call OWL_fnc_eventAnnouncer;
-	format ["FAST TRAVELLING TO %1", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
+	format [localize "$STR_A3_OWL_fast_travel", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
 
 	_pos spawn {
 		uiNamespace setVariable ["OWL_UI_blockMenu", TRUE];
@@ -169,7 +176,7 @@ OWL_fnc_srSectorScan = {
 	if (remoteExecutedOwner != 2) exitWith {};
 
 	"BIS_WL_Scan_WEST" call OWL_fnc_eventAnnouncer;
-	format ["INCOMING SECTOR SCAN: %1", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
+	format [localize "$STR_A3_OWL_sector_scan", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
 	sleep 2;
 	_this spawn {
 		params ["_sector", "_endTime"];
@@ -261,7 +268,7 @@ OWL_fnc_srSectorScan = {
 		_minimap ctrlRemoveEventHandler ["Draw", _eh2];
 		_map ctrlRemoveEventHandler ["Draw", _eh];
 		_strategyMap ctrlRemoveEventHandler ["Draw", _eh3];
-		format ["SECTOR SCAN TERMINATED: %1", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
+		format [localize "$STR_A3_OWL_sector_scan_terminated", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
 		"BIS_WL_Scan_Terminated_WEST" call OWL_fnc_eventAnnouncer;
 	};
 };
@@ -306,7 +313,7 @@ OWL_fnc_srSectorVoteNotify = {
 	if (!OWL_playerInitialized) exitWith {};
 	
 	"BIS_WL_Voting_WEST" call OWL_fnc_eventAnnouncer;
-	"VOTE FOR THE NEXT SECTOR" spawn BIS_fnc_WLSmoothText;
+	localize "$STR_A3_OWL_sector_vote" spawn BIS_fnc_WLSmoothText;
 	-1 call OWL_fnc_UI_hudUpdateVoting;
 };
 
@@ -368,7 +375,7 @@ OWL_srZoneRestrictTimer = {
 		_label ctrlSetStructuredText parseText format ["<t size='0.15'>&#160;</t><br/><t size='1' align='center'>RESTRICTED AREA</t>"];
 		_progress ctrlSetTextColor [0.8, 0.2, 0, 0.8];
 
-		"RESTRICTED AREA. LEAVE OR BE KILLED." spawn BIS_fnc_WLSmoothText;
+		localize "$STR_A3_OWL_zone_restriction" spawn BIS_fnc_WLSmoothText;
 		if (!(uiNamespace getVariable ["OWL_UI_data_options_zrAudio", false])) then {
 			playSound "air_raid";
 		};
@@ -392,11 +399,11 @@ OWL_fnc_srSectorSelected = {
 
 	if (_side == playerSide) then {
 		"BIS_WL_Selected_WEST" call OWL_fnc_eventAnnouncer;
-		format ["SECTOR SELECTED: %1", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
+		format [localize "$STR_A3_OWL_sector_selected", toUpper (_sector getVariable "OWL_sectorName")] spawn BIS_fnc_WLSmoothText;
 	} else {
 		if (playerSide == _sector getVariable "OWL_sectorSide") then {
 			"BIS_WL_Incoming_WEST" call OWL_fnc_eventAnnouncer;
-			"ENEMIES INCOMING" spawn BIS_fnc_WLSmoothText;
+			localize "$STR_A3_OWL_enemy_incoming" spawn BIS_fnc_WLSmoothText;
 		};
 	};
 

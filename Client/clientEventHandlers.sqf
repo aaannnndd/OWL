@@ -2,6 +2,10 @@ player addEventHandler ["HandleRating", {
 	params ["_unit", "_rating"];
 
 	private _pts = _rating / 20;
+
+	if (side _unit == sideEmpty) exitWith {};
+	if (side _unit == playerSide) exitWith {};
+	if (_pts <= 0) exitWith {};
 	
 	systemChat format ["%1 points awarded for killing an enemy.", _pts];
 }];
@@ -9,7 +13,7 @@ player addEventHandler ["HandleRating", {
 player addEventHandler ["Respawn", { 
 	group player selectLeader player; 
 
-	if (uiNamespace getVariable ["OWL_UI_data_options_autoNVG", false] && (dayTime < 4 || dayTime > 12)) then {
+	if (uiNamespace getVariable ["OWL_UI_data_options_autoNVG", false] && (dayTime < 4 || dayTime > 20)) then {
 		player action ["nvGoggles", player];
 	};
 }];
@@ -49,12 +53,12 @@ addMissionEventHandler ["HandleChatMessage", {
 	_block;
 }];
 
-addMissionEventHandler ["HandleChatMessage", {
-	params ["_channel", "_owner", "_from", "_text", "_person", "_name", "_strID", "_forcedDisplay", "_isPlayerMessage", "_sentenceType", "_chatMessageType"];
+// addMissionEventHandler ["HandleChatMessage", {
+// 	params ["_channel", "_owner", "_from", "_text", "_person", "_name", "_strID", "_forcedDisplay", "_isPlayerMessage", "_sentenceType", "_chatMessageType"];
 
-	if (!isNull _person) exitWith {
-		getPlayerVoNVolume _person == 0;
-	};
+// 	if (!isNull _person) exitWith {
+// 		getPlayerVoNVolume _person == 0;
+// 	};
 
-	false;
-}];
+// 	false;
+// }];
