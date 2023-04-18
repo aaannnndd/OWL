@@ -6,7 +6,6 @@ OWL_fnc_eventAnnouncer = compileFinal preprocessFileLineNumbers "Client\eventAnn
 OWL_fnc_updateSectorMarker = compileFinal preprocessFileLineNumbers "Client\sectorMarkerUpdate.sqf";
 OWL_fnc_toggleMenu = compileFinal preprocessFileLineNumbers "Client\GUI\menuToggle.sqf";
 call compileFinal preprocessFileLineNumbers "Client\serverResponse.sqf";
-call compileFinal preprocessFileLineNumbers "Client\initGUIFunctions.sqf";
 
 OWL_key_menu = 22;
 

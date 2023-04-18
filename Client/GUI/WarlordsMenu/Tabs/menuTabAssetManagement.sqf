@@ -87,7 +87,7 @@ OWL_fnc_UI_controlCondition = {
 			//_asset setVehicleRadar (if (isVehicleRadarOn _asset) then {0} else {1});
 			_res = (owner _asset == owner player);
 		};
-		case "add":
+		case "kick":
 		{
 			_res = (owner _asset == owner player);
 		};
@@ -106,7 +106,7 @@ _asset_mgmt_asset_list ctrlAddEventHandler ["LBSelChanged", {
 	private _lights = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_lights", controlNull];
 	private _engine = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_engine", controlNull];
 	private _radar = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_radar", controlNull];
-	private _add = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_add", controlNull];
+	private _kick = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_kick", controlNull];
 
 	if (isNull _selected) then {
 		_delete ctrlEnable false;
@@ -121,7 +121,7 @@ _asset_mgmt_asset_list ctrlAddEventHandler ["LBSelChanged", {
 		_lights ctrlEnable ([_selected, "lights"] call OWL_fnc_UI_controlCondition);
 		_engine ctrlEnable ([_selected, "engine"] call OWL_fnc_UI_controlCondition);
 		_radar ctrlEnable ([_selected, "radar"] call OWL_fnc_UI_controlCondition);
-		_add ctrlEnable ([_selected, "add"] call OWL_fnc_UI_controlCondition);
+		_add ctrlEnable ([_selected, "kick"] call OWL_fnc_UI_controlCondition);
 	};
 }];
 
@@ -162,35 +162,38 @@ _asset_mgmt_button_lock = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL
 _asset_mgmt_button_lights = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 _asset_mgmt_button_engine = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 _asset_mgmt_button_radar = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
-_asset_mgmt_button_add = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_kick = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 
 _asset_mgmt_button_delete ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*11.5, _wb*3.95, _hb*1];
 _asset_mgmt_button_lock ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*11.5, _wb*4, _hb*1];
 _asset_mgmt_button_lights ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*12.55, _wb*3.95, _hb*1];
 _asset_mgmt_button_engine ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*12.55, _wb*4, _hb*1];
 _asset_mgmt_button_radar ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*13.55, _wb*3.95, _hb*1];
-_asset_mgmt_button_add ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*13.55, _wb*4, _hb*1];
+_asset_mgmt_button_kick ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*13.55, _wb*4, _hb*1];
 
 _asset_mgmt_button_delete ctrlSetStructuredText parseText "DELETE";
 _asset_mgmt_button_lock ctrlSetStructuredText parseText "LOCK";
 _asset_mgmt_button_lights ctrlSetStructuredText parseText "LIGHTS";
 _asset_mgmt_button_engine ctrlSetStructuredText parseText "ENGINE";
 _asset_mgmt_button_radar ctrlSetStructuredText parseText "RADAR";
-_asset_mgmt_button_add ctrlSetStructuredText parseText "ADD TO SECTOR";
+_asset_mgmt_button_kick ctrlSetStructuredText parseText "KICK";
+_asset_mgmt_button_kick ctrlSetTooltip "Remove non-squad members from vehicle.";
 
 _asset_mgmt_button_delete ctrlCommit 0;
 _asset_mgmt_button_lock ctrlCommit 0;
 _asset_mgmt_button_lights ctrlCommit 0;
 _asset_mgmt_button_engine ctrlCommit 0;
 _asset_mgmt_button_radar ctrlCommit 0;
-_asset_mgmt_button_add ctrlCommit 0;
+_asset_mgmt_button_kick ctrlCommit 0;
+
+// TODO: to toggleable options, set red/green for 'on/off' when you click them.
 
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_delete", _asset_mgmt_button_delete];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lock", _asset_mgmt_button_lock];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lights", _asset_mgmt_button_lights];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_engine", _asset_mgmt_button_engine];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_radar", _asset_mgmt_button_radar];
-uiNamespace setVariable ["OWL_UI_asset_mgmt_button_add", _asset_mgmt_button_add];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_kick", _asset_mgmt_button_kick];
 
 OWL_fnc_UI_mgmt_getSelected = {
 	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
@@ -243,11 +246,11 @@ _asset_mgmt_button_radar ctrlAddEventHandler ["ButtonClick", {
 	};
 }];
 
-_asset_mgmt_button_add ctrlAddEventHandler ["ButtonClick", {
+_asset_mgmt_button_kick ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
 		systemChat str _selected;
-		systemChat "add";
+		systemChat "kick";
 	};
 }];
 /*

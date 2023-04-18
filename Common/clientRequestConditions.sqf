@@ -154,12 +154,75 @@ OWL_fnc_conditionAircraftSpawnFlying = {
 	true;
 };
 
-// Check before removing an asset from the game
+/********************/
+/* ASSET MANAGEMENT */
+/********************/
+
 OWL_fnc_conditionRemoveAsset = {
 	params ["_player", "_asset"];
 	// Do they own it?
     true;
 };
+
+
+OWL_fnc_conditionRemoveAsset = {
+	params ["_player", "_asset"];
+
+	if (owner _player != owner _asset) exitWith {
+		false;
+	};
+
+	private _hasPlayer = false;
+	{
+		if (alive _x && isPlayer _x) then {
+			_hasPlayer = true;
+		};
+	} forEach crew _vehicle;
+
+	if (_hasPlayer) exitWith {
+		false;
+	};
+
+	true;
+};
+
+OWL_fnc_conditionLockAsset = {
+	params ["_player", "_asset"];
+
+	if (owner _player != owner _asset) exitWith {
+		false;
+	};
+
+	private _hasPlayer = false;
+	{
+		if (alive _x && isPlayer _x) then {
+			_hasPlayer = true;
+		};
+	} forEach crew _vehicle;
+
+	if (_hasPlayer) exitWith {
+		false;
+	};
+
+	true;
+};
+
+OWL_fnc_conditionToggleLights = {
+	params ["_player", "_asset"];
+};
+
+OWL_fnc_conditionToggleEngine = {
+	params ["_player", "_asset"];
+};
+
+OWL_fnc_conditionToggleRadar = {
+	params ["_player", "_asset"];
+};
+
+OWL_fnc_conditionAddAssetToSector = {
+	params ["_player", "_asset", "_sector"];
+};
+
 
 // Make sure they exist so we aren't spawning VLS 
 // On behalf of some hacker.

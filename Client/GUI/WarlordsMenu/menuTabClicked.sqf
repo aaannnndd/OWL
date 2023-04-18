@@ -29,11 +29,22 @@ private _tabs = [];
 	_btn ctrlCommit 0;
 } forEach (_tabs - [ctrlIDC _ctrlButton]);
 
+private _lastTab = uiNamespace getVariable ["OWL_UI_lastTab", 1];
+
 private _ignore = uiNamespace getVariable ["OWL_UI_strategy_purchase_asset_controls", []];
 {
 	_idc = ctrlIDC _x;
 	if ( _idc >= 1000) then {
-		_x ctrlShow ( floor(_idc / 1000) == _curTab );
+		private _intab = floor(_idc / 1000) == _curTab;
+		if (!_intab) then {
+			if ( floor(_idc/1000) == _lastTab ) then {
+				_x setVariable ["OWL_showState", ctrlShown _x];
+			};
+			_x ctrlShow false;
+		} else {
+			private _show = _x getVariable ["OWL_showState", true];
+			_x ctrlShow _show;
+		};
 	};
 } forEach (allControls _display);
 
@@ -56,11 +67,11 @@ switch (_curTab) do {
 	//{
 	//	[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabCommander.sqf';
 	//};
-	case 5:
+	case 4:
 	{
 		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabGeneral.sqf';
 	};
-	case 4:
+	case 5:
 	{
 		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabOptions.sqf';
 	};

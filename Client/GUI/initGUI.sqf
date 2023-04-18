@@ -2,6 +2,7 @@
 **********[     Init UI Variables      ]************
 ************************************************* */
 
+call compileFinal preprocessFileLineNumbers "Client\GUI\initGUIFunctions.sqf";
 call compileFinal preprocessFileLineNumbers "Client\GUI\WarlordsMenu\initMenu.sqf";
 
 // Create our Warlords HUD

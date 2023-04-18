@@ -7,14 +7,3 @@
 
 allowFunctionsLog = 1;
 disabledAI = 1;
-
-author			= "Ando";
-onLoadName		= "Open Warlords";
-onLoadMission	= "Capture things";
-
-class Header
-{
-	gameType = Warlords;
-	minPlayers = 1;
-	maxPlayers = 10;
-};

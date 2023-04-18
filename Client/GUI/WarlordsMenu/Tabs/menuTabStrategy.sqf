@@ -2,13 +2,7 @@ params ["_display", "_tabIdx"];
 
 private _cur_selected = uiNamespace getVariable ["OWL_UI_strategy_map_last_clicked", objNull];
 
-if (!isNull (_display displayCtrl _tabIdx * 1000)) exitWith {
-	private _asset_controls = uiNamespace getVariable ["OWL_UI_strategy_purchase_asset_controls", objNull];
-	private _show = _cur_selected getVariable ["OWL_sectorSide", sideEmpty] == side player && !(_cur_selected getVariable ["OWL_sectorProtected", true]);
-	{
-		_x ctrlShow _show;
-	} forEach _asset_controls;
-};
+if (!isNull (_display displayCtrl _tabIdx * 1000)) exitWith {};
 
 OWL_fnc_UI_StrategyTab_onLocationSelected = {
 	params ["_object"];
@@ -43,11 +37,9 @@ OWL_fnc_UI_StrategyTab_onLocationSelected = {
 		} forEach (uiNamespace getVariable "OWL_UI_strategy_purchase_asset_controls");
 	};
 
-	if (!(_object getVariable "OWL_sectorProtected")) then {
-		{
-			_x ctrlShow (_object getVariable "OWL_sectorSide" == side player);
-		} forEach (uiNamespace getVariable "OWL_UI_strategy_purchase_asset_controls");
-	};
+	{
+		_x ctrlShow (!(_object getVariable "OWL_sectorProtected") && _object getVariable "OWL_sectorSide" == side player);
+	} forEach (uiNamespace getVariable "OWL_UI_strategy_purchase_asset_controls");
 
 	_button_scan ctrlSetStructuredText parseText "<t size='0.2'>&#160;</t><br/><t size='1.25' align='center' valign='bottom'>Scan Sector</t>";
 	_button_scan ctrlCommit 0;
