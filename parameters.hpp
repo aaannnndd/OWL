@@ -35,5 +35,28 @@ class Params
 		default = 1;
 	};
 
-	#include "\a3\Functions_F_Heli\Params\paramViewDistance.inc"
+	class ViewDistance
+	{
+		title = $STR_A3_paramViewDistance_title;
+		isGlobal = 1;
+
+		values[] = {
+			1000,
+			1500,
+			2500,
+			3600,
+			4000,
+			5000
+		};
+		texts[] = {
+			"1km",
+			"1.5km",
+			"2.5km",
+			"3.6km",
+			"4km",
+			"5km"
+		};
+		default = 3600;
+		function = "BIS_fnc_paramViewDistance";
+	};
 };

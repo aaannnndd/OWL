@@ -238,6 +238,7 @@ for "_i" from 0 to (_numSquads-1) do {
 		private _cnt = 0;
 		while {count _pos == 0} do {
 			_pos = _sectorPos findEmptyPosition [20+_cnt*10, _sectorWidth*2];
+			_cnt = _cnt + 1;
 		};
 	};
 
@@ -254,14 +255,22 @@ for "_i" from 0 to (_numSquads-1) do {
 	_sectorGroups pushBack _grp;
 };
 
+private _roadNodeCache = +_roadNodes;
+
 if (_numMRAP > 0) then {
 	for "_i" from 0 to (_numMRAP-1) do {
 		private _vehClass = selectRandom OWL_mrapVehicles;
 		private _pos = _sectorPos findEmptyPosition [30, _sectorWidth*2, _vehClass];
+		if (count _roadNodes > 0) then {
+			_pos = selectRandom _roadNodeCache;
+			_roadNodeCache = _roadNodeCache - [_pos];
+			_pos = getPosATL _pos; 
+		};
 
 		private _cnt = 0;
 		while {count _pos == 0} do {
 			_pos = _sectorPos findEmptyPosition [30+_cnt*10, _sectorWidth*2, _vehClass];
+			_cnt = _cnt + 1;
 		};
 
 		private _vehicle = _vehClass createVehicle _pos;
@@ -285,9 +294,16 @@ if (_numLAV > 0) then {
 		private _vehClass = selectRandom OWL_lavVehicles;
 		private _pos = _sectorPos findEmptyPosition [20, _sectorWidth*2, _vehClass];
 
+		if (count _roadNodes > 0) then {
+			_pos = selectRandom _roadNodeCache;
+			_roadNodeCache = _roadNodeCache - [_pos];
+			_pos = getPosATL _pos; 
+		};
+
 		private _cnt = 0;
 		while {count _pos == 0} do {
 			_pos = _sectorPos findEmptyPosition [20+_cnt*10, _sectorWidth*2, _vehClass];
+			_cnt = _cnt + 1;
 		};
 
 		private _vehicle = _vehClass createVehicle _pos;
@@ -311,9 +327,16 @@ if (_numLogi > 0) then {
 		private _vehClass = selectRandom OWL_logiVehicles;
 		private _pos = _sectorPos findEmptyPosition [10, _sectorWidth*2, _vehClass];
 
+		if (count _roadNodes > 0) then {
+			_pos = selectRandom _roadNodeCache;
+			_roadNodeCache = _roadNodeCache - [_pos];
+			_pos = getPosATL _pos;
+		};
+
 		private _cnt = 0;
 		while {count _pos == 0} do {
 			_pos = _sectorPos findEmptyPosition [10+_cnt*10, _sectorWidth*2, _vehClass];
+			_cnt = _cnt + 1;
 		};
 
 		private _adjSector = objNull;
@@ -352,6 +375,19 @@ if (_numArmor > 0) then {
 	for "_i" from 0 to (_numArmor-1) do {
 		private _vehClass = selectRandom OWL_armorVehicles;
 		private _pos = _sectorPos findEmptyPosition [30, _sectorWidth*2, _vehClass];
+
+		if (count _roadNodes > 0) then {
+			_pos = selectRandom _roadNodeCache;
+			_roadNodeCache = _roadNodeCache - [_pos];
+			_pos = getPosATL _pos;
+		};
+
+		private _cnt = 0;
+		while {count _pos == 0} do {
+			_pos = _sectorPos findEmptyPosition [10+_cnt*10, _sectorWidth*2, _vehClass];
+			_cnt = _cnt + 1;
+		};
+
 		private _vehicle = _vehClass createVehicle _pos;
 		createVehicleCrew _vehicle;
 		private _grp = group effectiveCommander _vehicle;
