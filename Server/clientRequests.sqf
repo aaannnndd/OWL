@@ -22,19 +22,6 @@ OWL_fnc_ICS = {
 	_persistentData remoteExec ["OWL_fnc_srInitClient", _owner];
 };
 
-OWL_persistentData = createHashMap;
-
-addMissionEventHandler ["PlayerDisconnected", {
-	params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
-
-	private _info = OWL_allWarlords getOrDefault [_owner, []];
-	if (count _info > 0) then {
-		OWL_persistentData set [_uid, _info];
-	};
-
-	OWL_allWarlords deleteAt _owner;
-}];
-
 /******************************************************
 ***********			Asset Business			***********
 ******************************************************/

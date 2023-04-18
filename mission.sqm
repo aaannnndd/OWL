@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=196;
+		nextID=212;
 	};
 	class Camera
 	{
-		pos[]={22769.238,257.36368,20840.768};
-		dir[]={0.29640853,-0.39155471,0.87110668};
-		up[]={0.12613112,0.92015487,0.37068319};
-		aside[]={0.9466958,0,-0.32212901};
+		pos[]={15651.738,24.463123,16307.709};
+		dir[]={-0.76455027,-0.48084152,-0.429261};
+		up[]={-0.41928002,0.87680578,-0.23540698};
+		aside[]={-0.48957178,1.7200364e-007,0.87196845};
 	};
 };
 binarizationWanted=0;
@@ -3411,7 +3411,7 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={15626.429,15.086246,16294.964};
+						position[]={15626.429,15.086259,16294.964};
 					};
 					side="Empty";
 					flags=1;
@@ -3420,7 +3420,24 @@ class Mission
 					};
 					id=327;
 					type="Land_ManurePile_01_F";
-					atlOffset=0.42498684;
+					atlOffset=0.42500019;
+					class CustomAttributes
+					{
+						class Attribute0
+						{
+							property="allowDamage";
+							expression="_this allowdamage _value;";
+							class Value
+							{
+								class data
+								{
+									singleType="BOOL";
+									value=0;
+								};
+							};
+						};
+						nAttributes=1;
+					};
 				};
 				class Item7
 				{
@@ -3493,17 +3510,18 @@ class Mission
 					dataType="Object";
 					class PositionInfo
 					{
-						position[]={15626.306,14.566697,16287.63};
-						angles[]={0.035984326,0,6.2618566};
+						position[]={15626.306,14.56643,16287.63};
+						angles[]={0.035988688,0,6.2618575};
 					};
 					side="Empty";
 					flags=4;
 					class Attributes
 					{
+						disableSimulation=1;
 					};
 					id=337;
 					type="Land_Tyres_F";
-					atlOffset=0.00026607513;
+					atlOffset=-9.5367432e-007;
 				};
 				class Item12
 				{

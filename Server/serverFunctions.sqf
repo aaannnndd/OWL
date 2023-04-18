@@ -68,6 +68,11 @@ OWL_fnc_onSectorSeized = {
 		_seizedBy call OWL_fnc_initSectorVote;
 	};
 
+	// Capturing base = 10xsector income bonus
+	{
+		[_x, (_sector getVariable "OWL_sectorIncome")*10] call OWL_fnc_addFunds;
+	} forEach OWL_allWarlords;
+
 	[_sector, _oldSide, _seizedBy] call OWL_fnc_rerouteAI;
 };
 
@@ -166,4 +171,31 @@ OWL_fnc_rerouteAI = {
 			};
 		} forEach crew _x;
 	} forEach _vehicles;
+};
+
+/* Helper to get serverside funds */
+OWL_fnc_getFunds = {
+	params ["_ownerId"];
+
+	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, []]];
+	_data#0;
+};
+
+/* Helper to set serverside funds */
+OWL_fnc_addFunds = {
+	params ["_ownerId", "_amount"];
+
+	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, []]];
+	private _funds = _data#0;
+
+	_funds = _funds + _amount;
+
+	if (_funds < 0) then {
+		_funds = 0;
+	};
+
+	_data set [0, _funds];
+	OWL_allWarlords set [_ownerId, _data];
+	_funds remoteExec ["OWL_fnc_srCPUpdate", _ownerId];
+	_funds;
 };
