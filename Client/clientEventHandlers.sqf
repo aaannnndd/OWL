@@ -26,5 +26,12 @@ addMissionEventHandler ["HandleChatMessage", {
 			_block = true;
 		};
 	};
+
+	/*
+	// If arma internally sets VoN volume to 0 when you mute a player ingame, this will easily filter out their chats as well.
+	if (getPlayerVoNVolume _person == 0) then {
+		_block = true;
+	};
+	*/
 	_block;
 }];
