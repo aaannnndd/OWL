@@ -52,16 +52,16 @@ switch (_curTab) do {
 	// {
 		// [_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabAssetManagement.sqf';
 	// };
-	case 4:
-	{
-		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabCommander.sqf';
-	};
+	//case 4:
+	//{
+	//	[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabCommander.sqf';
+	//};
 	case 3:
 	{
 		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabGeneral.sqf';
 	};
-	// case 7:
-	// {
-		// [_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabOptions.sqf';
-	// };
+	case 4:
+	{
+		[_display, _curTab] execVM 'Client\GUI\WarlordsMenu\Tabs\menuTabOptions.sqf';
+	};
 };

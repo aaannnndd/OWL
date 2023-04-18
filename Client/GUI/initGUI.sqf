@@ -42,7 +42,7 @@ OWL_fnc_UI_mapDrawCommon = {
 	_eh = _ctrlMap getVariable ["OWL_UI_mapEH", []];
 	if (count _eh == 0) then {
 		_eh = _ctrlMap ctrlAddEventHandler ["Draw", {
-			_this select 0 drawIcon [
+			/*_this select 0 drawIcon [
 				getMissionPath "aircraft_carrier.paa",
 				[1,1,1,1],
 				getPosASLVisual asd,
@@ -54,7 +54,7 @@ OWL_fnc_UI_mapDrawCommon = {
 				0.03,
 				"TahomaB",
 				"right"	
-			];
+			];*/
 			if (OWL_gameState # OWL_sideIndex == "voting") then {
 				private _voteList = OWL_sectorVoteList # OWL_sideIndex;
 				private _maxVotes = 0;

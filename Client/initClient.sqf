@@ -85,7 +85,7 @@ call compileFinal preprocessFileLineNumbers "Client\initPlayerTracking.sqf";
 
 0 spawn {
 	for "_i" from 0 to 5 do {
-		sleep 10;
+		sleep 30;
 		systemChat "Press U to open menu. Free jets in 'Free Jets' tab";
 	};
 	systemChat "Work in Progress. Aircraft/Naval not working yet.";

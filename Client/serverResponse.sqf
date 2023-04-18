@@ -369,7 +369,9 @@ OWL_srZoneRestrictTimer = {
 		_progress ctrlSetTextColor [0.8, 0.2, 0, 0.8];
 
 		"RESTRICTED AREA. LEAVE OR BE KILLED." spawn BIS_fnc_WLSmoothText;
-		playSound "air_raid";
+		if (!(uiNamespace getVariable ["OWL_UI_data_options_zrAudio", false])) then {
+			playSound "air_raid";
+		};
 
 		while {_timestamp > serverTime} do {
 			_progress progressSetPosition (1 - (_timestamp-serverTime) / 30);
