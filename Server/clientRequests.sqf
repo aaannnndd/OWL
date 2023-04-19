@@ -167,14 +167,14 @@ OWL_fnc_crAirdrop = {
 
 // Client requests to use a loadout
 OWL_fnc_crLoadout = {
-	params ["_player", "_loadout"];
+	params ["_loadout"];
 
 	// dont forgot sanity checks
 	private _owner = remoteExecutedOwner;
 	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
 
 	private _loadoutInfo = OWL_loadoutRequirements get (str (side _player));
-	_loadoutInfo # _loadout;
+	_loadoutInfo = _loadoutInfo # _loadout;
 
 	//do stuff
 
@@ -185,6 +185,12 @@ OWL_fnc_crLoadout = {
 	// _player setUnitTrait ["AudibleCoef", "true"]
 	// _player setUnitTrait ["LoadCoef", "true"]
 	// _player setUnitTrait ["CamouflageCoef", "true"]
+
+	[_player, missionConfigFile >> "CfgRespawnInventory" >> (_loadoutInfo#0)] call BIS_fnc_loadInventory;
+
+	_player setUnitTrait ["ExplosiveSpecialist", ("ToolKit" in backpackItems _player)];
+	_player setUnitTrait ["Engineer", ("ToolKit" in backpackItems _player)];
+	_player setUnitTrait ["Medic", ("Medkit" in backpackItems _player)];
 };
 
 OWL_fnc_removeFastTravelTicket = {

@@ -145,7 +145,7 @@ _asset_mgmt_button_assets ctrlAddEventHandler ["ButtonClick", {
 	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
 	lbClear _list;
 	{
-		_list lbAdd format getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
+		_list lbAdd getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
 		_list lbSetValue [(lbSize _list) - 1, _forEachIndex];
 		_list lbSetData [(lbSize _list) - 1, netId _x];
 	} forEach OWL_playerAssets;
@@ -163,6 +163,7 @@ _asset_mgmt_button_lights = _display ctrlCreate ["RscButtonMenu", _tabIdx call O
 _asset_mgmt_button_engine = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 _asset_mgmt_button_radar = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 _asset_mgmt_button_kick = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
+_asset_mgmt_button_clear = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 
 _asset_mgmt_button_delete ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*11.5, _wb*3.95, _hb*1];
 _asset_mgmt_button_lock ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*11.5, _wb*4, _hb*1];
@@ -170,6 +171,7 @@ _asset_mgmt_button_lights ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*12.55, _wb*3
 _asset_mgmt_button_engine ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*12.55, _wb*4, _hb*1];
 _asset_mgmt_button_radar ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*13.55, _wb*3.95, _hb*1];
 _asset_mgmt_button_kick ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*13.55, _wb*4, _hb*1];
+_asset_mgmt_button_clear ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*14.55, _wb*8, _hb*1];
 
 _asset_mgmt_button_delete ctrlSetStructuredText parseText "DELETE";
 _asset_mgmt_button_lock ctrlSetStructuredText parseText "LOCK";
@@ -178,6 +180,8 @@ _asset_mgmt_button_engine ctrlSetStructuredText parseText "ENGINE";
 _asset_mgmt_button_radar ctrlSetStructuredText parseText "RADAR";
 _asset_mgmt_button_kick ctrlSetStructuredText parseText "KICK";
 _asset_mgmt_button_kick ctrlSetTooltip "Remove non-squad members from vehicle.";
+_asset_mgmt_button_clear ctrlSetStructuredText parseText "CLEAR";
+_asset_mgmt_button_clear ctrlSetTooltip "Clear all items from vehicle inventory.";
 
 _asset_mgmt_button_delete ctrlCommit 0;
 _asset_mgmt_button_lock ctrlCommit 0;
@@ -185,7 +189,7 @@ _asset_mgmt_button_lights ctrlCommit 0;
 _asset_mgmt_button_engine ctrlCommit 0;
 _asset_mgmt_button_radar ctrlCommit 0;
 _asset_mgmt_button_kick ctrlCommit 0;
-
+_asset_mgmt_button_clear ctrlCommit 0;
 // TODO: to toggleable options, set red/green for 'on/off' when you click them.
 
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_delete", _asset_mgmt_button_delete];

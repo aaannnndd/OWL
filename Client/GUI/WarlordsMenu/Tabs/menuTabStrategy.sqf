@@ -350,7 +350,7 @@ private _show = _cur_selected getVariable ["OWL_sectorSide", sideEmpty] == side 
 
 	_button_loadout ctrlAddEventHandler ["ButtonClick", {
 		_lc = (_this#0) getVariable "OWL_buttonLoadout";
-		systemChat str _lc;
+		_lc remoteExec ["OWL_fnc_crLoadout", 2];
 	}];
 } forEach (OWL_loadoutRequirements get (str playerSide));
 
