@@ -74,27 +74,24 @@ _cfg = missionConfigFile >> "CfgLoadoutCost" >> "OpenWarlords";
 	private _arr = [];
 	{
 		private _class = configName _x;
+		private _name = getText (_cfg >> _side >> _class >> "name");
 		private _req = getArray (_cfg >> _side >> _class >> "req");
 		private _amt = getNumber (_cfg >> _side >> _class >> "amount");
 		private _cst = getNumber (_cfg >> _side >> _class >> "cost");
+		private _reqstr = getText (_cfg >> _side >> _class >> "reqstr");
 
-		_arr pushBack [_cst, _amt, _req];
+		_arr pushBack [_class, _name, _cst, _reqstr, _amt, _req];
 	} forEach (configProperties [_cfg >> _side, "true", true]);
 	OWL_loadoutRequirements set [_side, _arr];
 } forEach (configProperties [_cfg, "true", true]);
 
-// TODO: JUNK!! Temp arrays for spawning random AI to protect sectors.
-private _confgGroups = [configFile >> "CfgGroups" >> "WEST" >> "BLU_F" >> "Mechanized", configFile >> "CfgGroups" >> "EAST" >> "OPF_F" >> "Mechanized", configFile >> "CfgGroups" >> "Indep" >> "IND_F" >> "Mechanized"];
-private _factions = [WEST, EAST, INDEPENDENT];
-OWL_unitGroupMap = createHashMap;
+OWL_loadoutProgress = [];
 {
-	_squads = [];
+	private _side = str _x;
+	private _arr = [];
 	{
-		_squad = [];
-		{ 
-			_squad pushBack getText (_x >> "vehicle")
-  		} forEach configProperties [_x, "isClass _x", true];
-		_squads pushBack [getText (_x >> "name") ,_squad];
-	} forEach configProperties [(_confgGroups # _forEachIndex), "isClass _x", true];
-	OWL_unitGroupMap set [_x, _squads]; 
-} forEach _factions;
+		private _class = _x#0;
+		_arr pushBack (getNumber (_cfg >> _side >> _class >> "progress"));
+	} forEach (OWL_loadoutRequirements get _side);
+	OWL_loadoutProgress pushBack _arr;
+} forEach OWL_competingSides;

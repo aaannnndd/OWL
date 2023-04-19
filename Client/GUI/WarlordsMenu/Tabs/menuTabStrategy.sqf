@@ -297,20 +297,12 @@ private _show = _cur_selected getVariable ["OWL_sectorSide", sideEmpty] == side 
 	_x ctrlShow _show;
 } forEach _asset_controls;
 
-// TODO: these dummy values, generate from config file
-private _loadOuts = [
-	["RIFLEMAN", 0, true, "", "SquadLeader"],
-	["ENGINEER", 200, false, "Toolkit", "Engineer"],
-	["MEDIC", 200, false, "Medikit", "Medic"],
-	["ANTI-TANK", 250, true, "AT Launcher", "AT"],
-	["ANTI-AIR", 250, false, "AA Launcher", "AA"],
-	["*ARSENAL", 1000, true, "", "Arsenal"]
-];
-
 {
+	_x params ["_class", "_name", "_cost", "_reqstr"];
+	private _progress = (OWL_loadoutProgress # OWL_sideIndex) # _forEachIndex;
 	private _button_loadout = _display ctrlCreate ["RscButtonMenu", _tabIdx call OWL_fnc_TabIDC];
 	_button_loadout ctrlSetPosition [_xrel+_wb*23.5 + (_forEachIndex % 2)*8.125*_wb, _yrel+_hb*3 + floor (_forEachIndex / 2)*(_hb*3+(_wb*0.125)), _wb*8, _hb*3];
-	_button_loadout ctrlSetStructuredText parseText format ["<t font = 'PuristaLight' align = 'center' shadow = '2'>%1</t>", _x#0];
+	_button_loadout ctrlSetStructuredText parseText format ["<t font = 'PuristaLight' align = 'center' shadow = '2'>%1</t>", _name];
 	_button_loadout ctrlSetFontHeight _hb*2.5;
 	_button_loadout ctrlCommit 0;
 	private _tooltip = "";
@@ -321,26 +313,24 @@ private _loadOuts = [
 		_button_loadout ctrlEnable false; 
 	};
 
-	_button_loadout setVariable ["OWL_buttonLoadout",(["B_", "O_"] # ([WEST, EAST] find (side player))) + (_x#4)];
+	_button_loadout setVariable ["OWL_buttonLoadout", _forEachIndex];
 
-	private _unlocked = (_x#2);
-	private _req = (_x#3);
+	private _unlocked = _progress == 100;
 	if (!_unlocked) then {
 		private _prog_loadout = _display ctrlCreate ["RscProgressVertical", _tabIdx call OWL_fnc_TabIDC];
-		private _percent = random 1;
+		private _percent = (_progress / 100);
 		private _color = [(1-(_percent*0.5)), _percent, 0, 0.8];
 		_prog_loadout ctrlSetPosition [_xrel+_wb*23.5 + (_forEachIndex % 2)*8.125*_wb, _yrel+_hb*3 + floor (_forEachIndex / 2)*(_hb*3+(_wb*0.125)), _wb*0.5, _hb*3];
-		_prog_loadout progressSetPosition _percent;
+		_prog_loadout progressSetPosition (_progress / 100);
 		_prog_loadout ctrlSetTextColor _color;
 		_prog_loadout ctrlCommit 0;
-		_tooltip = _tooltip + format ["Progress: %2%3\nTeam must unlock this loadout\n - Bring more %1s back to the main base weapons cache.\n", _req,floor(_percent*100), "%"];
+		_tooltip = _tooltip + format ["Progress: %2%3\nTeam must unlock this loadout\n - Bring more %1s back to the main base weapons cache.\n", _reqstr,floor(_percent*100), "%"];
 		_button_loadout ctrlEnable false;
 	};
 
 	private _label = _display ctrlCreate ["RscStructuredText", _tabIdx call OWL_fnc_TabIDC];
 	_label ctrlSetPosition [_xrel+_wb*23.5 + (_forEachIndex % 2)*8.125*_wb, _yrel+_hb*5 + floor (_forEachIndex / 2)*(_hb*3+(_wb*0.125)), _wb*8, _hb*1];
 	_label ctrlSetBackgroundColor [0,0,0,0];
-	_cost = (_x#1);
 
 	_color = if ((uiNamespace getVariable ["OWL_UI_dummyFunds", 0]) >= _cost) then {"#FF00EE00"} else {"#FFEE0000"};
 
@@ -360,13 +350,9 @@ private _loadOuts = [
 
 	_button_loadout ctrlAddEventHandler ["ButtonClick", {
 		_lc = (_this#0) getVariable "OWL_buttonLoadout";
-		if ("Arsenal" in _lc) then {
-			["Open", [true]] spawn BIS_fnc_arsenal;
-		} else {
-			_loadout = [player, missionConfigFile >> "CfgRespawnInventory" >> _lc] call BIS_fnc_loadInventory;
-		};
+		systemChat str _lc;
 	}];
-} forEach _loadOuts;
+} forEach (OWL_loadoutRequirements get (str playerSide));
 
 _strategy_map ctrlAddEventHandler ["MouseButtonDown", {
 	params ["_map", "_button", "_xPos", "_yPos", "_shift", "_ctrl", "_alt"];

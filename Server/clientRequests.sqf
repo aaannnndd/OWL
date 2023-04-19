@@ -169,6 +169,22 @@ OWL_fnc_crAirdrop = {
 OWL_fnc_crLoadout = {
 	params ["_player", "_loadout"];
 
+	// dont forgot sanity checks
+	private _owner = remoteExecutedOwner;
+	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+
+	private _loadoutInfo = OWL_loadoutRequirements get (str (side _player));
+	_loadoutInfo # _loadout;
+
+	//do stuff
+
+	// https://community.bistudio.com/wiki/setUnitTrait
+	// _player setUnitTrait ["Medic", "true"]
+	// _player setUnitTrait ["Engineer", "true"]
+	// _player setUnitTrait ["ExplosiveSpecialist", "true"]
+	// _player setUnitTrait ["AudibleCoef", "true"]
+	// _player setUnitTrait ["LoadCoef", "true"]
+	// _player setUnitTrait ["CamouflageCoef", "true"]
 };
 
 OWL_fnc_removeFastTravelTicket = {
