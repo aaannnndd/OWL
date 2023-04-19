@@ -33,6 +33,12 @@ addMissionEventHandler ["HandleChatMessage", {
 		if ( ["connected",_text] call BIS_fnc_inString ) then {
 			_block = true;
 		};
+		if ( ["connecting",_text] call BIS_fnc_inString ) then {
+			_block = true;
+		};
+		if ( ["connected",_text] call BIS_fnc_inString ) then {
+			_block = true;
+		};
 
 		if (uiNamespace getVariable ["OWL_UI_data_options_cfKick", false]) then {
 			if ( ["would like to kick",_text] call BIS_fnc_inString) then {
@@ -42,6 +48,7 @@ addMissionEventHandler ["HandleChatMessage", {
 	};
 
 	if (!isNull _person) then {
+		// This doesn't work ;(
 		// If arma internally sets VoN volume to 0 when you mute a player ingame, this will easily filter out their chats as well.
 		if (uiNamespace getVariable ["OWL_UI_data_options_cfMuted", false]) then {
 			if (getPlayerVoNVolume _person == 0) then {
@@ -52,13 +59,3 @@ addMissionEventHandler ["HandleChatMessage", {
 
 	_block;
 }];
-
-// addMissionEventHandler ["HandleChatMessage", {
-// 	params ["_channel", "_owner", "_from", "_text", "_person", "_name", "_strID", "_forcedDisplay", "_isPlayerMessage", "_sentenceType", "_chatMessageType"];
-
-// 	if (!isNull _person) exitWith {
-// 		getPlayerVoNVolume _person == 0;
-// 	};
-
-// 	false;
-// }];

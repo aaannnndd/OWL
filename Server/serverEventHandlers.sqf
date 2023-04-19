@@ -1,5 +1,5 @@
 /* All event handlers on the SERVER SIDE */
-
+// TODO: swap this to 'clientStateChanged' since you can team switch and zzzz
 addMissionEventHandler ["PlayerDisconnected", {
 	params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
 

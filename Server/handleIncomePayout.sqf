@@ -1,11 +1,15 @@
 /*
 	Game long loop for giving command points to players
 */
+// Manage team sides
 
 private _bankCount = [playableSlotsNumber (OWL_competingSides#0), playableSlotsNumber (OWL_competingSides#1)];
 
 {
 	private _player = _x call OWL_fnc_getPlayerFromOwnerId;
+	if (isNull _player) then {
+		continue;
+	};
 	private _side = side _player;
 	
 	_amount = (_side call OWL_fnc_incomeCalculation);
