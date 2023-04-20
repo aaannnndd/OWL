@@ -31,7 +31,6 @@ private _tabs = [];
 
 private _lastTab = uiNamespace getVariable ["OWL_UI_lastTab", 1];
 
-private _ignore = uiNamespace getVariable ["OWL_UI_strategy_purchase_asset_controls", []];
 {
 	_idc = ctrlIDC _x;
 	if ( _idc >= 1000) then {

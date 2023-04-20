@@ -315,7 +315,7 @@ class CfgWLSectorAssetPreset
 				class O_MBT_04_command_F			{cost = 7500;	requirements[]={};	};	// "T-140K Angara"
 			};
 		};
-		class RESISTANCE
+		class GUER
 		{
 			class Infantry
 			{

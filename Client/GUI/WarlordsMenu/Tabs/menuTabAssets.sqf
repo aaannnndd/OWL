@@ -84,13 +84,13 @@ OWL_fnc_UI_AssetTab_onCategoryChange = {
 	params ["_list_category", "_index"];
 
 	_category = _list_category lbData _index;
-	_assetInfo = OWL_ASSET_LIST get _category;
+	_assetInfo = (OWL_assetList get playerSide) get _category;
 
 	_list_items = uiNamespace getVariable ["OWL_UI_asset_list_items", controlNull];
 	lbClear _list_items;
 
 	{
-		 (OWL_ASSET_INFO get _x) params ["_name", "_cost", "_requirements"];
+		 (OWL_assetInfo get _x) params ["_name", "_cost", "_requirements"];
 		_list_items lbAdd _name;
 		_list_items lbSetValue [_forEachIndex, _cost];
 		_list_items lbSetData [_forEachIndex, _x];
@@ -117,7 +117,7 @@ OWL_fnc_UI_AssetTab_onCategoryChange = {
 OWL_fnc_UI_checkAssetRequirements = {
 	params ["_class"];
 
-	(OWL_ASSET_INFO get _class) params ["_name", "_cost", "_requirements"];
+	(OWL_assetInfo get _class) params ["_name", "_cost", "_requirements"];
 
 	_errorCode = 0;
 
@@ -211,7 +211,7 @@ OWL_fnc_UI_AssetTab_onQueueCleared = {
 
 		for "_i" from 0 to (lbSize _queue_list - 1) do {
 			_item = _queue_list lbData _i;
-			(OWL_ASSET_INFO get _item) params ["_name", "_cost", "_requirements"];
+			(OWL_assetInfo get _item) params ["_name", "_cost", "_requirements"];
 			_totalCost = _totalCost + _cost;
 		};
 
@@ -242,7 +242,7 @@ OWL_fnc_UI_AssetTab_onQueueRemove = {
 			(uiNamespace getVariable ["OWL_UI_asset_button_airdrop_self", controlNull]) ctrlEnable false;
 		};
 
-		(OWL_ASSET_INFO get _item) params ["_name", "_cost", "_requirements"];
+		(OWL_assetInfo get _item) params ["_name", "_cost", "_requirements"];
 		_cost call OWL_fnc_UI_AssetTab_onCPChanged;
 
 		if (OWL_UI_menuDummyFunds >= 0) then {
@@ -277,13 +277,15 @@ OWL_fnc_UI_AssetTab_onRequestItemNaval = {
 		};
 	};
 
+	uiNamespace setVariable ["OWL_UI_naval_asset", _asset];
 	uiNamespace setVariable ["OWL_UI_asset_status", "Naval"];
 };
 
 OWL_fnc_UI_AssetTab_onRequestItemAircraft = {
 	params ["_asset"];
 
-	// Change confirm butto back to normal -> unselect current list item.
+	_sector = uiNamespace getVariable ["OWL_UI_asset_map_last_clicked", objNull];
+	[player, _sector, _asset] remoteExec ["OWL_fnc_crAircraftSpawn", 2];
 };
 
 OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {
@@ -295,7 +297,7 @@ OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {
 	_button_airdrop_loc = uiNamespace getVariable ["OWL_UI_asset_button_airdrop_location", controlNull];
 	_button_airdrop_self = uiNamespace getVariable ["OWL_UI_asset_button_airdrop_self", controlNull];
 
-	(OWL_ASSET_INFO get _asset) params ["_name", "_cost", "_requirements"];
+	(OWL_assetInfo get _asset) params ["_name", "_cost", "_requirements"];
 
 	if (OWL_UI_menuDummyFunds - _cost < 0) exitWith {
 		_button ctrlEnable false;
@@ -349,7 +351,7 @@ OWL_fnc_UI_AssetTab_updateAssetPreview = {
 	} else {
 		_queue_button ctrlEnable true;
 		_pic = getText (configFile >> "CfgVehicles" >> _class >> "editorPreview");
-		_info = OWL_ASSET_INFO get _class;
+		_info = OWL_assetInfo get _class;
 		_name = _info # 0;
 		_cost = _info # 1;
 		_reqs = _info # 2;
@@ -516,7 +518,7 @@ _asset_list_category ctrlSetPosition [_xrel+_wb*12, _yrel+_hb*3, _wb*5, _hb*14];
 	_asset_list_category lbSetValue [(lbSize _asset_list_category) - 1, _forEachIndex];
 	_asset_list_category lbSetData [(lbSize _asset_list_category) - 1, _x];
 	
-} forEach OWL_ASSET_LIST;
+} forEach (OWL_assetList get playerSide);
 _asset_list_category ctrlCommit 0;
 uiNamespace setVariable ["OWL_UI_asset_list_category", _asset_list_category];
 
@@ -695,8 +697,10 @@ _asset_map ctrlAddEventHandler ["MouseButtonDown", {
 		if (surfaceIsWater ( _map ctrlMapScreenToWorld[_xPos, _yPos]) ) then {
 			_map ctrlMapCursor ["", "Arrow"];
 			_map ctrlCommit 0;
-			systemChat format ["Position: %1", str [_xPos, _yPos]];
 			uiNamespace setVariable ["OWL_UI_asset_status", ""];
+			private _loc = _map ctrlMapScreenToWorld[_xPos, _yPos];
+			private _asset = uiNamespace getVariable ["OWL_UI_naval_asset", ""];
+			[_loc, _asset] remoteExec ["OWL_fnc_crDeployNaval", 2];
 		};
 	};
 

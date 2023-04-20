@@ -85,13 +85,54 @@ _cfg = missionConfigFile >> "CfgLoadoutCost" >> "OpenWarlords";
 	OWL_loadoutRequirements set [_side, _arr];
 } forEach (configProperties [_cfg, "true", true]);
 
-OWL_loadoutProgress = [];
+/***************************************************
+**********[       Process Assets       ]************
+************************************************* */
+
+OWL_assetList = createHashMap;
+OWL_assetInfo = createHashMap;
+private _side = playerSide;
+_array = configProperties [missionConfigFile >> "CfgWLRequisitionPresets" >> "OpenWarlords", "true", true];
+_path = missionConfigFile >> "CfgWLRequisitionPresets" >> "OpenWarlords";
+
 {
-	private _side = str _x;
-	private _arr = [];
+	private _side = configName _x;
+	private _sideAssets = createHashMap;
 	{
-		private _class = _x#0;
-		_arr pushBack (getNumber (_cfg >> _side >> _class >> "progress"));
-	} forEach (OWL_loadoutRequirements get _side);
-	OWL_loadoutProgress pushBack _arr;
-} forEach OWL_competingSides;
+		private _category = configName _x;
+		private _assetType = configProperties [_path >> _side >> _category, "true", true];
+		private _assetArr = [];
+		{
+			private _assetClass = configName _x;
+			private _assetName = getText (configFile >> "CfgVehicles" >> _assetClass >> "displayName");
+			private _assetCost = getNumber (_path >> _side >> _category >> _assetClass >> "cost");
+			private _requirements = getArray (_path >> _side >> _category >> _assetClass >> "requirements");
+
+			_assetArr pushBack _assetClass;
+			OWL_assetInfo set [_assetClass, [_assetName, _assetCost, _requirements]];
+		} forEach _assetType;
+
+		_sideAssets set [_category, _assetArr];
+	} forEach (configProperties [_path >> _side, "true", true]);
+	OWL_assetList set [[WEST, EAST, RESISTANCE] # (["WEST", "EAST", "GUER"] find _side), _sideAssets];
+} forEach _array;
+
+OWL_airstrips = [];
+{
+	private _class = _x;
+	private _runwayPos = getArray (_class >> "ilsPosition");
+	{
+		if (typeName _x == typeName "") then {_runwayPos set [_forEachIndex, parseNumber _x]};
+	} forEach _runwayPos;
+	if (count _runwayPos > 0) then {
+		private _dirVec = getArray (_class >> "ilsDirection");
+		if (count _dirVec == 3) then {
+			_runwayPos resize 2;
+			_runwayPos pushBack 0;
+			_dirVec pushBack (_dirVec deleteAt 1);
+			private _planeSpawnPos = _runwayPos vectorAdd (_dirVec vectorMultiply 3600);
+			private _planeSpawnDir = [_planeSpawnPos, _runwayPos] call BIS_fnc_dirTo;
+			OWL_airstrips pushBack [_runwayPos, _planeSpawnPos, _planeSpawnDir];
+		};
+	};
+} forEach ([configFile >> "CfgWorlds" >> worldName] + ("TRUE" configClasses (configFile >> "CfgWorlds" >> worldName >> "SecondaryAirports")));

@@ -46,6 +46,7 @@ OWL_mainBases = [];
 	private _sectorFTEnabled	= _sector getVariable "OWL_sectorParam_fastTravelEnabled";
 	private _sectorBorderSize	= _sector getVariable "OWL_sectorParam_borderSize";
 	private _sectorRequirements = _sector getVariable "OWL_sectorParam_assetRequirements";
+	private _airportID			= _sector getVariable ["OWL_sectorParam_airportID", -1];
 
 	private _sectorArea			= triggerArea _trigger;
 	private _sectorPos			= getPosATL _sector;
@@ -69,6 +70,7 @@ OWL_mainBases = [];
 	_sector setVariable ["OWL_sectorAreaOld", 		[_sectorPos] + triggerArea _trigger, TRUE];
 	_sector setVariable ["OWL_sectorProtected", true, TRUE];
 	_sector setVariable ["OWL_sectorAssetCount", [[],[],[]], TRUE];
+	_sector setVariable ["OWL_sectorAirportID", _airportID];
 
 	/* Final housecleaning */
 	_sector enableSimulationGlobal false;

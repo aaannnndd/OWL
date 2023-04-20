@@ -9,31 +9,6 @@ call compileFinal preprocessFileLineNumbers "Client\GUI\WarlordsMenu\initMenu.sq
 ("OWL_hudLayer" call BIS_fnc_rscLayer) cutRsc ["OWL_RscMainHUD", "PLAIN"];
 
 /***************************************************
-**********[       Process Assets       ]************
-************************************************* */
-
-private _side = playerSide;
-_array = configProperties [missionConfigFile >> "CfgWLRequisitionPresets" >> "OpenWarlords" >> str _side, "true", true];
-_path = missionConfigFile >> "CfgWLRequisitionPresets" >> "OpenWarlords" >> str _side;
-
-{
-	_category = configName _x;
-	_assetType = configProperties [_path >> _category, "true", true];
-	_assetArr = [];
-	{
-		_assetClass = configName _x;
-		_assetName = getText (configFile >> "CfgVehicles" >> _assetClass >> "displayName");
-		_assetCost = getNumber (_path >> _category >> _assetClass >> "cost");
-		_requirements = getArray (_path >> _category >> _assetClass >> "requirements");
-
-		_assetArr pushBack _assetClass;
-		OWL_ASSET_INFO set [_assetClass, [_assetName, _assetCost, _requirements]];
-	} forEach _assetType;
-
-	OWL_ASSET_LIST set [_category, _assetArr];
-} forEach _array;
-
-/***************************************************
 **************[      Functions      ]***************
 ************************************************* */
 
@@ -390,7 +365,7 @@ OWL_fnc_UI_AssetTab_onCPChanged = {
 		private _errorCode = _class call OWL_fnc_UI_checkAssetRequirements;
 		_request_button ctrlEnable (_errorCode == 0);
 		_request_button ctrlSetTooltip (_errorCode call OWL_fnc_UI_assetRequestTooltip);
-		_class call OWL_fnc_updateAssetPreview;
+		_class call OWL_fnc_UI_AssetTab_updateAssetPreview;
 	};
 
 	_menu_asset_footer = uiNamespace getVariable ["OWL_UI_asset_menu_footer", controlNull];

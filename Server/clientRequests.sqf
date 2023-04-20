@@ -267,11 +267,23 @@ OWL_fnc_crDeployDefense = {
 
 // Requests to magically appear a boat in the water
 OWL_fnc_crDeployNaval = {
-	params ["_player", "_sector", "_asset"];
+	params ["_loc", "_asset"];
 
-	if (!(_this call OWL_fnc_conditionDeployNaval)) exitWith {
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_sectorVote: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if (!([_player, _asset, _loc] call OWL_fnc_conditionDeployNaval)) exitWith {
 		[format ["Naval/Boat Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
-	};	
+	};
+
+	// validate asset + cost 
+	private _veh = _asset createVehicle _loc;
+
+	_veh remoteExec ["OWL_fnc_srDeployNaval", _client];
 };
 
 // Requests to have class '_asset' deployed at '_sector'
@@ -280,7 +292,80 @@ OWL_fnc_crAircraftSpawn = {
 
 	if (!(_this call OWL_fnc_conditionAircraftSpawn)) exitWith {
 		[format ["Aircraft Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
-	};	
+	};
+
+	// could use typical crew but lazy
+	private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side _player)); 
+
+	// TODO:
+	// Cache previously spawned aircraft to avoid mid-air collissions.
+	// Potentially spam 'land/landAt' commands so pilots dont do random stuff if engaged
+
+	// Exclude VTOL
+	if (_asset isKindOf "Plane" && !(_asset isKindOf "VTOL_Base_F")) then {
+		private _airportID = _sector getVariable "OWL_sectorAirportID";
+		if (_airportID == -1) exitWith {};
+
+		private _runwayInfo = OWL_airstrips # _airportID;   
+		_runwayInfo params ["_pos", "_planePos", "_planeDir"];   
+		private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side player));   
+		private _pilot = (createGroup (side group player)) createUnit [_pilotClass, [_planePos#0, _planePos#1, 0], [], 0, "NONE"];   
+		private _aircraft = createVehicle [_asset, _planePos, [], 0, "FLY"];   
+		_pilot assignAsDriver _aircraft;   
+		_pilot moveInDriver _aircraft;   
+		
+		_aircraft setPosATL _planePos;   
+		_aircraft setDir _planeDir;   
+		_aircraft setVelocityModelSpace [0,150,0];   
+		
+		_aircraft landAt _airportID;  
+		
+		// So uglyyyyyyyy
+		_aircraft spawn {  
+			private _landed = false;  
+			private _maxTime = serverTime+180;
+			while {!isNull _this && alive _this && !_landed && (_maxTime > serverTime)} do {   
+				sleep 0.5;   
+				if ((getPosATL _this)#2 < 2) then {
+					_this setVelocityModelSpace ((velocityModelSpace _this) vectorMultiply 0.75);
+					private _pilot = effectiveCommander _this;  
+					unassignVehicle _pilot;  
+					[_pilot] orderGetIn false;  
+					sleep 60;
+					_this setVelocityModelSpace [0,0,0];
+					_this engineOn false; 
+					deleteGroup group _pilot;
+					deleteVehicle _pilot;
+					_landed = true; 
+				};   
+			};   
+		};
+	} else {
+		private _spawnPos = (getPosATL _sector) vectorAdd [random 150,random 150,100];
+		private _spawnDir = [_spawnPos, getPosATL _sector] call BIS_fnc_dirTo;
+		private _pilot = (createGroup (side group _player)) createUnit [_pilotClass, [_spawnPos#0, _spawnPos#1, 0], [], 0, "NONE"]; 
+		private _aircraft = createVehicle [_asset, _spawnPos, [], 0, "FLY"]; 
+		_pilot assignAsDriver _aircraft; 
+		_pilot moveInDriver _aircraft; 
+		
+		_aircraft setPosATL _spawnPos; 
+		_aircraft setDir _spawnDir;
+
+		_aircraft land "LAND";
+		_aircraft spawn {
+			private _landed = false;
+
+			while {!isNull _this && alive _this && !_landed} do { 
+				sleep 0.5; 
+				if ((getPosATL _this)#2 < 2) then {
+					private _pilot = effectiveCommander _this;
+					unassignVehicle _pilot;
+					[_pilot] orderGetIn false;
+					_landed = true;
+				}; 
+			}; 
+		};
+	};
 };
 
 // Request to have class '_asset' deployed with them flying in it
@@ -314,8 +399,6 @@ OWL_fnc_crPurchaseReenforcements = {
 // When a client sends in a vote for a new sector.
 OWL_fnc_crSectorVote = {
 	params ["_sector"];
-
-	systemChat (_sector getVariable "OWL_sectorName");
 
 	private _client = remoteExecutedOwner;
 	private _player = _client call OWL_fnc_getPlayerFromOwnerId;

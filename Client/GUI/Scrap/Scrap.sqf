@@ -239,3 +239,39 @@ player moveInDriver createVehicle ["B_Plane_Fighter_01_F", _pos, [], 0, "FLY"];}
 (vehicle player) setPosATL _pos; (vehicle player) setDir _dir;  
 (vehicle player) setVelocityModelSpace [0,194,0];  
 player allowDamage false;
+
+/*private _asset = "B_Plane_CAS_01_dynamicLoadout_F";  
+ private _airportID = 0;  
+ private _runwayInfo = OWL_airstrips # _airportID;   
+ _runwayInfo params ["_pos", "_planePos", "_planeDir"];   
+ private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side player));   
+ private _pilot = (createGroup (side group player)) createUnit [_pilotClass, [_planePos#0, _planePos#1, 0], [], 0, "NONE"];   
+ private _aircraft = createVehicle [_asset, _planePos, [], 0, "FLY"];   
+ _pilot assignAsDriver _aircraft;   
+ _pilot moveInDriver _aircraft;   
+  
+ _aircraft setPosATL _planePos;   
+ _aircraft setDir _planeDir;   
+ _aircraft setVelocityModelSpace [0,150,0];   
+  
+ _aircraft landAt _airportID;  
+  
+ _aircraft spawn {  
+ private _landed = false;  
+  
+ while {!isNull _this && alive _this && !_landed} do {   
+ sleep 0.5;   
+ if ((getPosATL _this)#2 < 2) then {
+   _this setVelocityModelSpace ((velocityModelSpace _this) vectorMultiply 0.75);
+  private _pilot = effectiveCommander _this;  
+  unassignVehicle _pilot;  
+  [_pilot] orderGetIn false;  
+  _landed = true; 
+  sleep 60;
+  _this setVelocityModelSpace [0,0,0];
+  _this engineOn false; 
+  deleteGroup group _pilot;
+  deleteVehicle _pilot; 
+ };   
+ };   
+ };*/

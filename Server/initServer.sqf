@@ -40,6 +40,21 @@ publicVariable "OWL_contestedSector";
 OWL_gameState = ["",""];
 publicVariable "OWL_gameState";
 
+private _cfg = missionConfigFile >> "CfgLoadoutCost" >> "OpenWarlords";
+
+OWL_loadoutProgress = [];
+{
+	private _side = str _x;
+	private _arr = [];
+	{
+		private _class = _x#0;
+		_arr pushBack (getNumber (_cfg >> _side >> _class >> "progress"));
+	} forEach (OWL_loadoutRequirements get _side);
+	OWL_loadoutProgress pushBack _arr;
+} forEach OWL_competingSides;
+
+publicVariable "OWL_loadoutProgress";
+
 /******************************************************
 ***********			Init Finalized			***********
 ******************************************************/

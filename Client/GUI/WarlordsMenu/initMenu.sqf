@@ -14,10 +14,6 @@ OWL_UI_menuTabStrategy = compileFinal preprocessFileLineNumbers "Client\GUI\Warl
 
 uiNamespace setVariable ["OWL_UI_lastTab", 1];
 
-// TODO clean this up
-OWL_ASSET_LIST = createHashMap;
-OWL_ASSET_INFO = createHashMap;
-
 OWL_UI_menuDummyFunds = uiNamespace getVariable ["OWL_UI_dummyFunds", 0];
 
 OWL_MENU_TABS = [

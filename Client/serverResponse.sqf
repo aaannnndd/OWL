@@ -282,9 +282,15 @@ OWL_fnc_srDeployDefense = {
 
 /* Client sent position of their dummy object, server has verified and placed it for them */
 OWL_fnc_srDeployNaval = {
+	params ["_boat"];
 	if (remoteExecutedOwner != 2) exitWith {
 		[format ["Client recieved response remoteExec from non-server client: %1", remoteExecutedOwner]] call OWL_fnc_log;
 	};
+
+	OWL_playerAssets pushBack _boat;
+
+	"BIS_WL_Airdrop_WEST" call OWL_fnc_eventAnnouncer;
+	localize "$STR_A3_OWL_airdrop_incoming" spawn BIS_fnc_WLSmoothText;	
 };
 
 /* Aircraft will be landing at the specifed position. */
