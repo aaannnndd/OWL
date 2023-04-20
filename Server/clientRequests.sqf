@@ -258,11 +258,37 @@ OWL_fnc_crSectorScan = {
 
 // Requests to turn their dummy 'simpleObject' into a real object @ position.
 OWL_fnc_crDeployDefense = {
-	params ["_player", "_sector", "_asset"];
+	params ["_asset", "_loc", "_dir"];
 
 	if (!(_this call OWL_fnc_conditionDeployDefense)) exitWith {
 		[format ["Defense Deployment Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
-	};	
+	};
+
+	systemChat str _this;
+
+	private _tempAsset = createSimpleObject [_asset, ATLToASL _loc, TRUE];
+	_tempAsset setDir _dir;
+	
+	systemChat str _tempAsset;
+
+	private _valid = _tempAsset call OWL_fnc_validateObjectPlacement;
+	deleteVehicle _tempAsset;
+	if (!_valid) exitWith {};
+
+	// Test to see if it can blow up if created in wrong orientation before being corrected?
+	private _defense = createVehicle [_asset, _loc, [], 0, "CAN_COLLIDE"];
+	_defense setDir _dir;
+	_defense enableWeaponDisassembly false;
+
+	_isFort = if (toLower getText (configFile >> "CfgVehicles" >> _asset >> "simulation") == "house") then {TRUE} else {FALSE};
+
+	if !(_isFort) then {
+		if (getNumber (configFile >> "CfgVehicles" >> _asset >> "isUav") == 1) then {
+			createVehicleCrew _defense;
+			(effectiveCommander _defense) setSkill 1;
+			(group effectiveCommander _defense) deleteGroupWhenEmpty TRUE;
+		};
+	};
 };
 
 // Requests to magically appear a boat in the water

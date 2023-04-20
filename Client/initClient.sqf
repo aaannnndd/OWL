@@ -5,6 +5,7 @@ OWL_fnc_sectorLocationName = compileFinal preprocessFileLineNumbers "Client\sect
 OWL_fnc_eventAnnouncer = compileFinal preprocessFileLineNumbers "Client\eventAnnouncer.sqf";
 OWL_fnc_updateSectorMarker = compileFinal preprocessFileLineNumbers "Client\sectorMarkerUpdate.sqf";
 OWL_fnc_toggleMenu = compileFinal preprocessFileLineNumbers "Client\GUI\menuToggle.sqf";
+OWL_fnc_handleDeployDefense = compileFinal preprocessFileLineNumbers "Client\handleDeployDefense.sqf";
 call compileFinal preprocessFileLineNumbers "Client\serverResponse.sqf";
 
 OWL_key_menu = 22;

@@ -318,8 +318,8 @@ OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {
 OWL_fnc_UI_AssetTab_onRequestItemDefense = {
 	params ["_asset"];
 
-	// Close Menu, use warlords code?
-	// spawn {} waitUntil -> send request to server.
+	systemChat _asset;
+	_asset call OWL_fnc_handleDeployDefense;
 };
 
 OWL_fnc_UI_AssetTab_onSectorChanged = {
@@ -588,7 +588,7 @@ _asset_button_request ctrlAddEventHandler ["ButtonClick", {
 		{
 			_asset call OWL_fnc_UI_AssetTab_onRequestItemNaval;
 		};
-		case "Defenses":
+		case "Defences":
 		{
 			_asset call OWL_fnc_UI_AssetTab_onRequestItemDefense;
 		};
