@@ -113,12 +113,15 @@ OWL_fnc_hasAssetRequirement = {
 	_success;
 };
 
+/* Quick function to get name of helipad/harbor ect. Localize later */
 OWL_fnc_getAssetRequirementName = {
 	params ["_requirement"];
 
 	["Runway", "Harbor", "Helipad"] select (["A", "W", "H"] find _requirement);
 };
 
+/* This will be called multiple times on the client while trying to place objects (defense) */
+/* It will be called a single time on the server to verify the placement is in fact solid   */
 OWL_fnc_validateObjectPlacement = {
 	params ["_object"];
 
@@ -129,26 +132,50 @@ OWL_fnc_validateObjectPlacement = {
 	private _posASL = getPosWorld _object;
 	private _dir = direction _object;
 
+	// Makes lines on all edges of bounding box + x's across each face
+	// Add additional 75% size bounding box inside to help catch collisions
 	private _corners = [];
+	private _scorner = [];
 	{
 		private _cv = _boundingBox#1;
 		_corners pushBack [_cv#0 * _x#0, _cv#1 * _x#1, _cv#2 * _x#2];
+		_scorner pushBack [_cv#0 * _x#0 * 0.75, _cv#1 * _x#1 * 0.75, _cv#2 * _x#2 * 0.75];
 	} forEach [ [1,1,-1], [1,-1,-1], [-1,-1,-1], [-1,1,-1], [1,1,1], [1,-1,1], [-1,-1,1], [-1,1,1] ];
 
 	private _edges = []; 
 
+	// verticle edges
 	for "_i" from 0 to 3 do {
 		private _val = if (_i < 2) then {6} else {2};
 		_edges pushBack [_corners#_i, _corners#(_i+4)];
-		_edges pushBack [_corners#_i, _corners#(_i+_val)];
+		_edges pushBack [_scorner#_i, _scorner#(_i+4)];
 	};
+
+	// top/bottom edges
 	for "_i" from 0 to 6 step 2 do {
 		private _low = if (_i < 4) then {1} else {5};
 		private _high = if (_i <4) then {3} else {7};
 		_edges pushBack [_corners#_i, _corners#(_low)];
 		_edges pushBack [_corners#_i, _corners#(_high)];
+		_edges pushBack [_scorner#_i, _scorner#(_low)];
+		_edges pushBack [_scorner#_i, _scorner#(_high)];
 	};
 
+	// X's across each face of the box
+	_edges pushBack [_corners#4, _corners#6];
+	_edges pushBack [_corners#7, _corners#5];
+	_edges pushBack [_corners#0, _corners#2];
+	_edges pushBack [_corners#3, _corners#1];
+	_edges pushBack [_corners#4, _corners#1];
+	_edges pushBack [_corners#5, _corners#0];
+	_edges pushBack [_corners#7, _corners#2];
+	_edges pushBack [_corners#6, _corners#3];
+	_edges pushBack [_corners#6, _corners#1];
+	_edges pushBack [_corners#5, _corners#2];
+	_edges pushBack [_corners#7, _corners#0];
+	_edges pushBack [_corners#4, _corners#3];
+
+	// rotate points around object, add them to object position.
 	private _intersects = false;
 	{
 		private _s = sin (-1 * _dir);
@@ -167,7 +194,7 @@ OWL_fnc_validateObjectPlacement = {
 		if (_endATL#2 < 0) then {
 			_endATL set[2, 0.2];
 		};
-		_start = ATLToASL _startATL;
+		_start = ATLToASL _startATL; 
 		_end = ATLToASL _endATL;
 		OWL_defenseVisualLines set [_forEachIndex, [_start, _end]];
 		if (!_intersects) then {

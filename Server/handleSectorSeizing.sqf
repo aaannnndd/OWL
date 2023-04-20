@@ -78,9 +78,18 @@ private _effectiveVehicles = [0,0,0];
 
 // _strengthOfSide is difference between defenders and attackers. If it's negative, you overpower the defenders.
 private _strengthOfSide = [0,0,0];
+private _inCombat = false;
 {
 	_strengthOfSide set [_x, ((_numInfantry#_sectorIndex) - (_numInfantry#_x)) + ((_numVehicles # _sectorIndex) - (_effectiveVehicles#_x))*5];
+	if (_numInfantry#_x + _numVehicles#_x > 0) then {
+		_inCombat = true;
+	};
 } forEach ([0,1,2]-[_sectorIndex]);
+
+// Set sector in combat.
+if (_inCombat != _sector getVariable ["OWL_sectorInCombat", false]) then {
+	_sector setVariable ["OWL_sectorInCombat", _inCombat, TRUE];
+};
 
 // _strengthOfSide # _capFor will always be 0.
 private _capFor = _sectorIndex;

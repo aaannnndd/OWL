@@ -16,6 +16,7 @@ OWL_fnc_ICS = {
 
 	private _uid = getPlayerUID _player;
 	// OWL_allWarlords [ownerId, [CommandPoints, OwnedAssets, OwnedSquadmates]]
+	// SquadMates not neccessary since we'll delete whe player logs out.
 	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, [], []]];
 	OWL_allWarlords set [_owner, _persistentData];
 
@@ -33,6 +34,11 @@ OWL_fnc_crAirdrop = {
 	private _owner = remoteExecutedOwner;
 	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
 
+	if (isNull _player) exitWith {};
+
+	if (!([_target, _assets] call OWL_fnc_subConditionAirdrop)) exitWith {
+		format ["Airdrop Request from %1 (%2) does not meet conditions.", name _player] call OWL_fnc_log;
+	};
 	// TODO
 	// 1). Validate all assets are orderable
 	// 2). Validate price of all assets is affordable
@@ -260,23 +266,24 @@ OWL_fnc_crSectorScan = {
 OWL_fnc_crDeployDefense = {
 	params ["_asset", "_loc", "_dir"];
 
-	if (!(_this call OWL_fnc_conditionDeployDefense)) exitWith {
-		[format ["Defense Deployment Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
+	private _player = remoteExecutedOwner call OWL_fnc_getPlayerFromOwnerId;
+
+	if (!([_player, _asset] call OWL_fnc_conditionDeployDefense)) exitWith {
+		[format ["Defense Deployment Request from %1 does not meet conditions.", name _player]] call OWL_fnc_log;
 	};
 
-	systemChat str _this;
-
-	private _tempAsset = createSimpleObject [_asset, ATLToASL _loc, TRUE];
+	private _tempAsset = createSimpleObject [_asset, _loc, TRUE];
+	_tempAsset setPosASL _loc;
 	_tempAsset setDir _dir;
-	
-	systemChat str _tempAsset;
 
 	private _valid = _tempAsset call OWL_fnc_validateObjectPlacement;
 	deleteVehicle _tempAsset;
-	if (!_valid) exitWith {};
+	if (!_valid) exitWith {
+		[format ["Defense Deployment Request from %1 (%2) invalid object placement.", name _player, _asset]] call OWL_fnc_log;
+	};
 
-	// Test to see if it can blow up if created in wrong orientation before being corrected?
-	private _defense = createVehicle [_asset, _loc, [], 0, "CAN_COLLIDE"];
+	// TODO: Test to see if it can blow up if created in wrong orientation before being corrected?
+	private _defense = createVehicle [_asset, ASLtoATL _loc, [], 0, "CAN_COLLIDE"];
 	_defense setDir _dir;
 	_defense enableWeaponDisassembly false;
 
@@ -289,6 +296,8 @@ OWL_fnc_crDeployDefense = {
 			(group effectiveCommander _defense) deleteGroupWhenEmpty TRUE;
 		};
 	};
+
+	_defense remoteExec ["OWL_fnc_srDeployDefense", remoteExecutedOwner];
 };
 
 // Requests to magically appear a boat in the water
@@ -345,7 +354,7 @@ OWL_fnc_crAircraftSpawn = {
 		_aircraft setVelocityModelSpace [0,150,0];   
 		
 		_aircraft landAt _airportID;  
-		
+		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", remoteExecutedOwner];
 		// So uglyyyyyyyy
 		_aircraft spawn {  
 			private _landed = false;  
@@ -363,7 +372,7 @@ OWL_fnc_crAircraftSpawn = {
 					deleteGroup group _pilot;
 					deleteVehicle _pilot;
 					_landed = true; 
-				};   
+				};
 			};   
 		};
 	} else {
@@ -377,6 +386,8 @@ OWL_fnc_crAircraftSpawn = {
 		_aircraft setPosATL _spawnPos; 
 		_aircraft setDir _spawnDir;
 
+		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", remoteExecutedOwner];
+
 		_aircraft land "LAND";
 		_aircraft spawn {
 			private _landed = false;
@@ -389,9 +400,10 @@ OWL_fnc_crAircraftSpawn = {
 					[_pilot] orderGetIn false;
 					_landed = true;
 				}; 
-			}; 
+			};
 		};
 	};
+
 };
 
 // Request to have class '_asset' deployed with them flying in it

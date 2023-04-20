@@ -6,6 +6,11 @@
 		1). Client circumvents this functionality and asks server to fast travel.
 		2). Server validates whether or not the client can actually fast travel upon recieving request.
 		3). Server denies fast travel if conditions not met.
+
+	TODO:
+	Convert return values into:
+	"" - valid
+	"Condition not met 1\nCondition not met 2\nCondition not met 3" - error tooltip text to return.
 */
 
 OWL_fnc_conditionFastTravel = {
@@ -89,25 +94,25 @@ OWL_fnc_subConditionAirdrop = {
 	params ["_player", "_assets"];
 
 	/* Check if have sufficient command points + viable asset list */
+	true;
 };
 
 /* Check if you can airdrop at specific location */
 OWL_fnc_conditionAirdropLocation = {
-	params ["_player", "_sector", "_assets"];
+	params ["_player", "_target", "_assets"];
 
-	if (isNull _sector) exitWith {
+	if (isNull _target) exitWith {
 		false;
 	};
 
-	if (_sector getVariable "OWL_sectorSide" != (side _player)) exitWith {
+	if (_target != _player && _target getVariable "OWL_sectorSide" != (side _player)) exitWith {
 		false;
 	};
 
-	private _commandPoints = 0;
+	private _commandPoints = uiNamespace getVariable ["OWL_dummyFunds", 0];
 	if (isServer) then {
-		_commandPoints = 1; // get from server data
-	} else {
-		_commandPoints = uiNamespace getVariable ["OWL_dummyFunds", 0];
+		_commandPoints = OWL_allWarlords get (owner _player);
+		_commandPoints = _commandPoints # 0;
 	};
 
 	// get cost of assets and validate you can.
@@ -115,25 +120,25 @@ OWL_fnc_conditionAirdropLocation = {
 	true;
 };
 
-/* Check if you can airdrop on yourself */
-OWL_fnc_conditionAirdropSelf = {
-	params ["_player", "_assets"];
+// Make sure an object can be placed.
+// Object intersection checks will be kept serverside only.
+OWL_fnc_conditionDeployDefense = {
+	params ["_player", "_asset"];
 
-	private _commandPoints = 0;
-	if (isServer) then {
-		_commandPoints = 1; // get from server data
-	} else {
-		_commandPoints = uiNamespace getVariable ["OWL_dummyFunds", 0];
+	if (isNull _player) exitWith {
+		false;
 	};
 
-	// get cost of assets and validate you can.
+	private _sector = _player call OWL_fnc_isInFriendlyZone;
 
-    true;
-};
+	if (isNull _sector) exitWith {
+		false;
+	};
 
-// This will be ugly
-OWL_fnc_conditionDeployDefense = {
-	params ["_player", "_sector", "_asset"];
+	if (_sector getVariable "OWL_sectorInCombat") exitWith {
+		false;
+	};
+
     true;
 };
 

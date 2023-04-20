@@ -59,6 +59,8 @@ OWL_mainBases = [];
 
 	/* Set up our sectors dynamic variables from defaults */
 	_sector setVariable ["OWL_sectorName",			_sectorName];
+	_sector setVariable ["OWL_sectorAirportID",		 _airportID];
+
 	_sector setVariable ["OWL_sectorSide",			_sectorSide, TRUE];
 	_sector setVariable ["OWL_sectorIncome",		_sectorIncome, TRUE];
 	_sector setVariable ["OWL_sectorFTEnabled",		_sectorFTEnabled, TRUE];
@@ -68,10 +70,9 @@ OWL_mainBases = [];
 	_sector setVariable ["OWL_sectorScanCooldown",	[0,0,0], TRUE];
 	_sector setVariable ["OWL_sectorTickets",		[150,150], TRUE];
 	_sector setVariable ["OWL_sectorAreaOld", 		[_sectorPos] + triggerArea _trigger, TRUE];
-	_sector setVariable ["OWL_sectorProtected", true, TRUE];
-	_sector setVariable ["OWL_sectorAssetCount", [[],[],[]], TRUE];
-	_sector setVariable ["OWL_sectorAirportID", _airportID];
-
+	_sector setVariable ["OWL_sectorProtected", 	true, TRUE];
+	_sector setVariable ["OWL_sectorAssetCount", 	[[],[],[]], TRUE];
+	_sector setVariable ["OWL_sectorInCombat",		false, TRUE];
 	/* Final housecleaning */
 	_sector enableSimulationGlobal false;
 

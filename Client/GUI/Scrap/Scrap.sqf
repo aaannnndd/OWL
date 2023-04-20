@@ -275,3 +275,123 @@ player allowDamage false;
  };   
  };   
  };*/
+
+ /*
+
+// this is just to visual ingame
+OWL_LINES = [];
+for "_i" from 0 to 11 do {OWL_LINES pushBack [0,0,0]};
+
+OWL_defenceDrawEH = missionNamespace getVariable ["OWL_defenceDrawEH", -1];
+if (OWL_defenceDrawEH != -1) then {
+	removeMissionEventHandler["draw3D", OWL_defenceDrawEH];
+};
+
+OWL_defenceDrawEH = addMissionEventHandler ["draw3D",
+{
+	{
+		drawLine3D [ASLToAGL (_x#0), ASLToAGL (_x#1), [1,0,1,1]
+		];
+	} forEach OWL_LINES;
+}];
+
+_lines pushBack [_corners#0, _corners#1];	// b tr -> b br	
+_lines pushBack [_corners#0, _corners#3];	// b tr -> b tl
+_lines pushBack [_corners#2, _corners#3];	// b bl -> b tl
+_lines pushBack [_corners#2, _corners#1];	// b bl -> b br
+_lines pushBack [_corners#4, _corners#5];	// t tr -> t br 
+_lines pushBack [_corners#4, _corners#7];	// t tr -> t tl
+_lines pushBack [_corners#6, _corners#7];	// t bl -> t tl
+_lines pushBack [_corners#6, _corners#5];	// t bl -> t br
+_lines pushBack [_corners#0, _corners#4];	// b tr -> t tr
+_lines pushBack [_corners#1, _corners#5];	// b br -> t br
+_lines pushBack [_corners#2, _corners#6];	// b bl -> t bl
+_lines pushBack [_corners#3, _corners#7];	// b tl -> t tl
+ */
+
+ 	/**
+	
+	// 12 more x's
+
+	t tr -> t bl	4 -> 6
+	t tl -> t br	7 -> 5
+
+	b tr -> b bl	0 -> 2
+	b tl -> b br	3 -> 1
+
+	t tr -> b br	4 -> 1
+	t br -> b tr	5 -> 0 
+
+	t tl -> b bl	7 -> 2
+	t bl -> b tl	6 -> 3
+
+	t bl -> b br	6 -> 1
+	t br -> b bl	5 -> 2
+
+	t tl -> b tr	7 -> 0
+	t tr -> b tl	4 -> 3
+
+	0 2
+	0 5
+	0 7
+
+	1 3
+	1 4	
+	1 6
+
+	2 0	
+	2 5
+	2 7
+
+	3 1
+	3 4
+	3 6
+
+	4 1
+	4 3
+	4 6
+
+	5 0
+	5 2
+	5 7
+
+	6 4
+	6 3
+	6 1
+
+	7 0
+	7 2
+	7 5
+
+
+	_edges pushBack [_corners#4, _corners#6];
+	_edges pushBack [_corners#7, _corners#5];
+	_edges pushBack [_corners#0, _corners#2];
+	_edges pushBack [_corners#3, _corners#1];
+	_edges pushBack [_corners#4, _corners#1];
+	_edges pushBack [_corners#5, _corners#0];
+	_edges pushBack [_corners#7, _corners#2];
+	_edges pushBack [_corners#6, _corners#3];
+	_edges pushBack [_corners#6, _corners#1];
+	_edges pushBack [_corners#5, _corners#2];
+	_edges pushBack [_corners#7, _corners#0];
+	_edges pushBack [_corners#4, _corners#7];
+
+
+
+	_lines pushBack [_corners#0, _corners#1];	// b tr -> b br	
+	_lines pushBack [_corners#0, _corners#3];	// b tr -> b tl
+	_lines pushBack [_corners#2, _corners#3];	// b bl -> b tl
+	_lines pushBack [_corners#2, _corners#1];	// b bl -> b br
+	_lines pushBack [_corners#4, _corners#5];	// t tr -> t br 
+	_lines pushBack [_corners#4, _corners#7];	// t tr -> t tl
+	_lines pushBack [_corners#6, _corners#7];	// t bl -> t tl
+	_lines pushBack [_corners#6, _corners#5];	// t bl -> t br
+	_lines pushBack [_corners#0, _corners#4];	// b tr -> t tr
+	_lines pushBack [_corners#1, _corners#5];	// b br -> t br
+	_lines pushBack [_corners#2, _corners#6];	// b bl -> t bl
+	_lines pushBack [_corners#3, _corners#7];	// b tl -> t tl
+
+	
+	
+	*/

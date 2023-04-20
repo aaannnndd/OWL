@@ -275,9 +275,13 @@ OWL_fnc_srSectorScan = {
 
 /* Client sent position of their dummy object, server has verified and placed it for them */
 OWL_fnc_srDeployDefense = {
+	params ["_defense"];
+
 	if (remoteExecutedOwner != 2) exitWith {
 		[format ["Client recieved response remoteExec from non-server client: %1", remoteExecutedOwner]] call OWL_fnc_log;
 	};
+
+	OWL_playerAssets pushBack _defense;
 };
 
 /* Client sent position of their dummy object, server has verified and placed it for them */
@@ -295,9 +299,15 @@ OWL_fnc_srDeployNaval = {
 
 /* Aircraft will be landing at the specifed position. */
 OWL_fnc_srAircraftSpawn = {
+	params ["_aircraft"];
+
 	if (remoteExecutedOwner != 2) exitWith {
 		[format ["Client recieved response remoteExec from non-server client: %1", remoteExecutedOwner]] call OWL_fnc_log;
 	};
+
+	if (isNull _aircraft) exitWith {};
+
+	OWL_playerAssets pushBack _aircraft;
 };
 
 /* Client requested one of their assets be deleted. */
