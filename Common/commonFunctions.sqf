@@ -126,7 +126,7 @@ OWL_fnc_validateObjectPlacement = {
 	if ((getPosASL _object)#2 < 0) exitWith {false};
 
 	private _boundingBox = boundingBoxReal _object;
-	private _posASL = getPosASL _object;
+	private _posASL = getPosWorld _object;
 	private _dir = direction _object;
 
 	private _corners = [];
