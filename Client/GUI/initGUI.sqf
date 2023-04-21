@@ -302,7 +302,7 @@ with uiNamespace do {
 		playSound "AddItemOK";
 
 		if (!isNull _sector) then {
-			[player, _sector] remoteExec ["OWL_fnc_crFastTravel", 2];
+			_sector remoteExec ["OWL_fnc_crFastTravel", 2];
 		};
 	}];
 

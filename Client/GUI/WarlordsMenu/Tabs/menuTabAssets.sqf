@@ -285,7 +285,7 @@ OWL_fnc_UI_AssetTab_onRequestItemAircraft = {
 	params ["_asset"];
 
 	_sector = uiNamespace getVariable ["OWL_UI_asset_map_last_clicked", objNull];
-	[player, _sector, _asset] remoteExec ["OWL_fnc_crAircraftSpawn", 2];
+	[_sector, _asset] remoteExec ["OWL_fnc_crAircraftSpawn", 2];
 };
 
 OWL_fnc_UI_AssetTab_onRequestItemAirdrop = {

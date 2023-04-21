@@ -33,7 +33,7 @@ OWL_fnc_isInFriendlyZone = {
 	private _sector = objNull;
 	{
 		if (_x getvariable "OWL_sectorSide" == side _player) then {
-			if (position player inArea (_x getVariable "OWL_sectorAreaOld")) then {
+			if (position _player inArea (_x getVariable "OWL_sectorAreaOld")) then {
 				_sector = _x;
 				break;
 			};

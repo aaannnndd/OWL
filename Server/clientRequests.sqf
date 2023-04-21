@@ -9,18 +9,18 @@
 ******************************************************/
 
 OWL_fnc_ICS = {
-	private _owner = remoteExecutedOwner;
-	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
-	if (isNull _player) exitWith {[format ["Tried to initialize null player for client %1", _owner]] call OWL_fnc_log};
+	if (isNull _player) exitWith {[format ["Tried to initialize null player for client %1", _client]] call OWL_fnc_log};
 
 	private _uid = getPlayerUID _player;
 	// OWL_allWarlords [ownerId, [CommandPoints, OwnedAssets, OwnedSquadmates]]
 	// SquadMates not neccessary since we'll delete whe player logs out.
 	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, [], []]];
-	OWL_allWarlords set [_owner, _persistentData];
+	OWL_allWarlords set [_client, _persistentData];
 
-	_persistentData remoteExec ["OWL_fnc_srInitClient", _owner];
+	_persistentData remoteExec ["OWL_fnc_srInitClient", _client];
 };
 
 /******************************************************
@@ -31,8 +31,8 @@ OWL_fnc_ICS = {
 OWL_fnc_crAirdrop = {
 	params ["_target", "_assets", "_flags"];
 	
-	private _owner = remoteExecutedOwner;
-	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
 	if (isNull _player) exitWith {};
 
@@ -54,9 +54,6 @@ OWL_fnc_crAirdrop = {
 	private _ownedAssets = [];
 	private _squadMates = [];
 	_target = getPosATL _target;
-
-	private _owner = remoteExecutedOwner;
-	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
 
 	/* Sort all of our assets into their groups */
 	private _ammoCrates = [];
@@ -157,18 +154,18 @@ OWL_fnc_crAirdrop = {
 	/* Server plays this sound */
 	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, _target vectorAdd [0, 0, 100]];
 
-	private _data = OWL_allWarlords getOrDefault [_owner, [0,[],[]]];
+	private _data = OWL_allWarlords getOrDefault [_client, [0,[],[]]];
 	private _assArr = _data # 1;
 	private _infArr = _data # 2;
 	_assArr append _ownedAssets;
 	_infArr append _squadMates;
 	_data set [1, _assArr];
 	_data set [2, _infArr];
-	OWL_allWarlords set [_owner, _data];
+	OWL_allWarlords set [_client, _data];
 
 	// Send updated assets to player
 
-	[_ownedAssets, _squadMates] remoteExec ["OWL_fnc_srAirdrop", _owner];
+	[_ownedAssets, _squadMates] remoteExec ["OWL_fnc_srAirdrop", _client];
 };
 
 // Client requests to use a loadout
@@ -176,8 +173,8 @@ OWL_fnc_crLoadout = {
 	params ["_loadout"];
 
 	// dont forgot sanity checks
-	private _owner = remoteExecutedOwner;
-	private _player = _owner call OWL_fnc_getPlayerFromOwnerId;
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
 	private _loadoutInfo = OWL_loadoutRequirements get (str (side _player));
 	_loadoutInfo = _loadoutInfo # _loadout;
@@ -211,9 +208,12 @@ OWL_fnc_removeFastTravelTicket = {
 
 // Client requests to fast travel. 
 OWL_fnc_crFastTravel = {
-	params ["_player", "_sector"];
+	params ["_sector"];
 
-	if (!(_this call OWL_fnc_conditionFastTravel)) exitWith {
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+
+	if (!([_player, _sector] call OWL_fnc_conditionFastTravel)) exitWith {
 		format ["Fast Travel Request from %1 (%2) does not meet conditions.", name _player] call OWL_fnc_log;
 	};
 
@@ -245,7 +245,8 @@ OWL_fnc_crFastTravel = {
 OWL_fnc_crSectorScan = {
 	params ["_sector"];
 
-	private _player = remoteExecutedOwner call OWL_fnc_getPlayerFromOwnerId;
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
 	if(isNull _player) exitWith {
 		[format ["Sector Scan Request from invalid client. Player not Initalized."]] call OWL_fnc_log;
@@ -266,7 +267,8 @@ OWL_fnc_crSectorScan = {
 OWL_fnc_crDeployDefense = {
 	params ["_asset", "_loc", "_dir"];
 
-	private _player = remoteExecutedOwner call OWL_fnc_getPlayerFromOwnerId;
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
 	if (!([_player, _asset] call OWL_fnc_conditionDeployDefense)) exitWith {
 		[format ["Defense Deployment Request from %1 does not meet conditions.", name _player]] call OWL_fnc_log;
@@ -297,7 +299,7 @@ OWL_fnc_crDeployDefense = {
 		};
 	};
 
-	_defense remoteExec ["OWL_fnc_srDeployDefense", remoteExecutedOwner];
+	_defense remoteExec ["OWL_fnc_srDeployDefense", _client];
 };
 
 // Requests to magically appear a boat in the water
@@ -323,14 +325,17 @@ OWL_fnc_crDeployNaval = {
 
 // Requests to have class '_asset' deployed at '_sector'
 OWL_fnc_crAircraftSpawn = {
-	params ["_player", "_sector", "_asset"];
+	params ["_sector", "_asset"];
+
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
 	if (!(_this call OWL_fnc_conditionAircraftSpawn)) exitWith {
 		[format ["Aircraft Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
 	};
 
 	// could use typical crew but lazy
-	private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side _player)); 
+	private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side group _player)); 
 
 	// TODO:
 	// Cache previously spawned aircraft to avoid mid-air collissions.
@@ -343,8 +348,8 @@ OWL_fnc_crAircraftSpawn = {
 
 		private _runwayInfo = OWL_airstrips # _airportID;   
 		_runwayInfo params ["_pos", "_planePos", "_planeDir"];   
-		private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side player));   
-		private _pilot = (createGroup (side group player)) createUnit [_pilotClass, [_planePos#0, _planePos#1, 0], [], 0, "NONE"];   
+		private _pilotClass = ["B_pilot_F", "O_pilot_F", "I_pilot_F"] # ([WEST, EAST, RESISTANCE] find (side group _player));   
+		private _pilot = (createGroup (side group _player)) createUnit [_pilotClass, [_planePos#0, _planePos#1, 0], [], 0, "NONE"];   
 		private _aircraft = createVehicle [_asset, _planePos, [], 0, "FLY"];   
 		_pilot assignAsDriver _aircraft;   
 		_pilot moveInDriver _aircraft;   
@@ -354,7 +359,7 @@ OWL_fnc_crAircraftSpawn = {
 		_aircraft setVelocityModelSpace [0,150,0];   
 		
 		_aircraft landAt _airportID;  
-		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", remoteExecutedOwner];
+		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", _client];
 		// So uglyyyyyyyy
 		_aircraft spawn {  
 			private _landed = false;  

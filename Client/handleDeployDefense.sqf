@@ -41,6 +41,7 @@ OWL_defenceDrawEH = addMissionEventHandler ["draw3D",
 			[toUpper localize "STR_A3_WL_deploy_canceled"] spawn BIS_fnc_WLSmoothText;
 			playSound "AddItemFailed";
 			deleteVehicle _def;
+			break;
 		};
 
 		sleep 0.01;
