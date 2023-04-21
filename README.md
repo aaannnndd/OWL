@@ -1,6 +1,20 @@
 # OPEN WARLORDS
 
+*A focus has been placed on getting code working, with the optimization coming later. Much of the code is written with a lot of extra variables or potentially unneccessary functions for the sake of clarity while the project is in development*
+
 Welcome to the Open Warlords project! This project was written from scratch while taking notes from the vanilla code and warlords Redux. The goal is to provide an improved experience over the base vanilla warlords by solving the most commonly complained about bugs, improving FPS and multiplayer security. Apologies if this repository is still a bit of a mess. it's been just me working on the project and comments/documentation/issues have mainly served as quick post it notes so I don't forget things - it will get cleaned up as time goes on.
+
+There has been a lot of frustration with warlords regarding support for the game mode and ingame moderation. Given the games age, it isn't economically feasible for the game developers to continue support at a level the community demands (Software maintenance is the majority of a projects cost). My hope is that this will be a community supported and run project with its own server and active admins to deal with cheaters/griefers. (This will cut down on needing anti-grief scripts and increase performance as well).
+
+I've purchased a dedicated server for testing and plan to upgrade it once the project is nearly completed and has gone through testing. The server host has a 5GHz+ package which should provide an awesome experience. I'll personally foot the bill for a month or two, but hope the option for crowdsource payment through the server host will hopefully make it a bit more sustainable.
+
+If you would like to see how the project is coming along, the test server is usually running an up to date version of the project.
+
+**Discord**: https://discord.gg/DQjYRMvv\
+**Server Info**: 160.202.167.19:2542\
+**Server Name**: [Warlords] Aircraft Practice
+
+The server has a tab for 'free jets' for fun while in development. Press 'U' to open the menu.
 
 # **TECHNICAL CHANGES**
 
