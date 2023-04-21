@@ -120,7 +120,7 @@ OWL_fnc_srCPUpdate = {
 	};
 };
 
-/* Client receives notification to do black in/black out effect as they will be teleported. */
+/* Client receives notification to do FT effect as they will be teleported. */
 OWL_fnc_srFastTravel = {
 	params ["_sector", "_pos"];
 
