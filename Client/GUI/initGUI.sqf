@@ -19,7 +19,7 @@ OWL_fnc_UI_mapDrawCommon = {
 	if (count _eh == 0) then {
 		_eh = _ctrlMap ctrlAddEventHandler ["Draw", {
 			/*_this select 0 drawIcon [
-				getMissionPath "aircraft_carrier.paa",
+				getMissionPath "data\aircraft_carrier.paa",
 				[1,1,1,1],
 				getPosASLVisual asd,
 				(9.05)*(1/(ctrlMapScale (_this select 0))),

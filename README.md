@@ -1,3 +1,7 @@
+# OPEN WARLORDS
+
+Welcome to the Open Warlords project! This project was written from scratch while taking notes from the vanilla code and warlords Redux. The goal is to provide an improved experience over the base vanilla warlords by solving the most commonly complained about bugs, improving FPS and multiplayer security. Apologies if this repository is still a bit of a mess. it's been just me working on the project and comments/documentation/issues have mainly served as quick post it notes so I don't forget things - it will get cleaned up as time goes on.
+
 # **TECHNICAL CHANGES**
 
 ## **SECURITY**:
@@ -53,7 +57,7 @@ The performance gains are already noticable in an empty server, but will become 
 ## **GAMEPLAY**
 - **Intuitive for new players**
   - Tutorials / FAQ
-  - Make important information available through the UI.
+  - Make important information readily available through the UI.
   - Add explanatory tooltips as much as possible
   - Auto-show important UI components (GPS, NVG)
   - Default Loadouts (Arsenal is an overload of unsorted guns)
