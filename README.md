@@ -1,31 +1,3 @@
-    quick reference
-    
-    init.sqf
-        initCommon.sqf
-            clientRequestConditions.sqf
-            commonFunctions.sqf
-        initServer.sqf
-            serverFunctions.sqf
-            clientRequests.sqf
-            initSectors.sqf
-            serverEventHandlers.sqf
-            *spawn Main game loop*
-                handleIncomePayout.sqf
-                sectorAreaCheck.sqf
-                    handleSectorSeizing.sqf
-        initClient.sqf
-           serverResponse.sqf
-           initGUI.sqf
-               initGUIFunctions.sqf
-               initMenu.sqf
-           clientEventHandlers.sqf
-           initPlayerTracking.sqf
-        
-    All remaining functions on the client are called through the UI, or via remoteExec notifications from the server.
-    All remaining functions on the server are called in response to client requests, or due to conditions in the main game loop.
-
-*A focus has been placed on getting code working, with the optimization coming later. Much of the code is written with a lot of extra variables or potentially unneccessary functions for the sake of clarity while the project is in development*
-
 # OPEN WARLORDS
 
 Welcome to the Open Warlords project! This project was written from scratch while taking notes from the vanilla code and warlords Redux. The goal is to provide an improved experience over the base vanilla warlords by solving the most commonly complained about bugs, improving FPS and multiplayer security. Apologies if this repository is still a bit of a mess. it's been just me working on the project and comments/documentation/issues have mainly served as quick post it notes so I don't forget things - it will get cleaned up as time goes on.
@@ -65,6 +37,34 @@ The "unit position checks" take advantage of the fact that you can check the sec
 The performance gains are already noticable in an empty server, but will become exponentially noticable as the playercount increases.
 &nbsp;
 ## **Program Flow:**
+
+    quick reference
+    
+    init.sqf
+        initCommon.sqf
+            clientRequestConditions.sqf
+            commonFunctions.sqf
+        initServer.sqf
+            serverFunctions.sqf
+            clientRequests.sqf
+            initSectors.sqf
+            serverEventHandlers.sqf
+            *spawn Main game loop*
+                handleIncomePayout.sqf
+                sectorAreaCheck.sqf
+                    handleSectorSeizing.sqf
+        initClient.sqf
+           serverResponse.sqf
+           initGUI.sqf
+               initGUIFunctions.sqf
+               initMenu.sqf
+           clientEventHandlers.sqf
+           initPlayerTracking.sqf
+        
+    All remaining functions on the client are called through the UI, or via remoteExec notifications from the server.
+    All remaining functions on the server are called in response to client requests, or due to conditions in the main game loop.
+
+*A focus has been placed on getting code working, with the optimization coming later. Much of the code is written with a lot of extra variables or potentially unneccessary functions for the sake of clarity while the project is in development*
 
 ### **Server**
 1. Initialize common functions and variables
