@@ -422,11 +422,21 @@ OWL_fnc_crAircraftSpawnFlying = {
 
 // Requests to have an asset removed from the game.
 OWL_fnc_crRemoveAsset = {
-	params ["_player", "_asset"];
+	params ["_asset"];
 
-	if (!(_this call OWL_fnc_conditionRemoveAsset)) exitWith {
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_sectorVote: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if (!([_player, _asset] call OWL_fnc_conditionRemoveAsset)) exitWith {
 		[format ["Asset Deletion Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
-	};	
+	};
+
+	deleteVehicle _asset;
+	remoteExec ["OWL_fnc_srOnAssetDeleted", _client];
 };
 
 // Requests to purchase reenforcements for a sector

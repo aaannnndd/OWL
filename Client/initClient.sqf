@@ -7,6 +7,7 @@ OWL_fnc_updateSectorMarker = compileFinal preprocessFileLineNumbers "Client\sect
 OWL_fnc_toggleMenu = compileFinal preprocessFileLineNumbers "Client\GUI\menuToggle.sqf";
 OWL_fnc_handleDeployDefense = compileFinal preprocessFileLineNumbers "Client\handleDeployDefense.sqf";
 call compileFinal preprocessFileLineNumbers "Client\serverResponse.sqf";
+call compileFinal preprocessFileLineNumbers "Client\clientFunctions.sqf";
 
 OWL_key_menu = 22;
 
@@ -91,10 +92,15 @@ call compileFinal preprocessFileLineNumbers "Client\initPlayerTracking.sqf";
 		sleep 30;
 		systemChat "Press U to open menu. Free jets in 'Free Jets' tab";
 	};
-	systemChat "Work in Progress. Aircraft/Naval not working yet.";
+	systemChat "Work in Progress.";
 };
 
 
 
-
+/*
+https://community.bistudio.com/wiki/inputAction
+https://community.bistudio.com/wiki/inputAction/actions
+https://community.bistudio.com/wiki/BIS_fnc_holdKey -> force player to open menu before starting the game.
+https://community.bistudio.com/wiki/BIS_fnc_holdActionAdd -> add ability to drop stuff off at ammo cache, rebuild radio towers, hangars ect
+ */
 

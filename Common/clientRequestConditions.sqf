@@ -165,14 +165,8 @@ OWL_fnc_conditionAircraftSpawnFlying = {
 
 OWL_fnc_conditionRemoveAsset = {
 	params ["_player", "_asset"];
-	// Do they own it?
-    true;
-};
 
-
-OWL_fnc_conditionRemoveAsset = {
-	params ["_player", "_asset"];
-
+	// TODO: use servers owned assets thing in OWL_allWarlords
 	if (owner _player != owner _asset) exitWith {
 		false;
 	};
@@ -182,7 +176,7 @@ OWL_fnc_conditionRemoveAsset = {
 		if (alive _x && isPlayer _x) then {
 			_hasPlayer = true;
 		};
-	} forEach crew _vehicle;
+	} forEach crew _asset;
 
 	if (_hasPlayer) exitWith {
 		false;

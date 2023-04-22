@@ -90,6 +90,9 @@ OWL_fnc_srAirdrop = {
 
 	OWL_playerAssets append _assets;
 	//OWL_playerMates append _infantry; all will be put in player squad, don't really need this.
+	{
+		_x call OWL_fnc_newAssetAddedToPlayer;
+	} forEach (_assets + _infantry);
 
 	"BIS_WL_Airdrop_WEST" call OWL_fnc_eventAnnouncer;
 	localize "$STR_A3_OWL_airdrop_incoming" spawn BIS_fnc_WLSmoothText; 
@@ -282,6 +285,7 @@ OWL_fnc_srDeployDefense = {
 	};
 
 	OWL_playerAssets pushBack _defense;
+	_defense call OWL_fnc_newAssetAddedToPlayer;
 };
 
 /* Client sent position of their dummy object, server has verified and placed it for them */
@@ -292,6 +296,7 @@ OWL_fnc_srDeployNaval = {
 	};
 
 	OWL_playerAssets pushBack _boat;
+	_boat call OWL_fnc_newAssetAddedToPlayer;
 
 	"BIS_WL_Airdrop_WEST" call OWL_fnc_eventAnnouncer;
 	localize "$STR_A3_OWL_airdrop_incoming" spawn BIS_fnc_WLSmoothText;	
@@ -308,6 +313,7 @@ OWL_fnc_srAircraftSpawn = {
 	if (isNull _aircraft) exitWith {};
 
 	OWL_playerAssets pushBack _aircraft;
+	_aircraft call OWL_fnc_newAssetAddedToPlayer;
 };
 
 /* Client requested one of their assets be deleted. */
@@ -432,4 +438,13 @@ OWL_fnc_srSectorSelected = {
 
 	_sector call OWL_fnc_updateSectorMarker;
 	_sector call OWL_fnc_UI_onMainMapLocationClicked;
+};
+
+OWL_fnc_srOnAssetDeleted = {
+	// Update your asset list (check for objNull and remove)
+	private _index = objNull find OWL_playerAssets;
+	while {_index != -1} do {
+		OWL_playerAssets deleteAt _index;
+		_index = objNull find OWL_playerAssets;
+	};
 };
