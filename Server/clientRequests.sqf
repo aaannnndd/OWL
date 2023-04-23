@@ -146,6 +146,7 @@ OWL_fnc_crAirdrop = {
 		private _para = createVehicle ["Steerable_Parachute_F", _finalPos, [], 0, "FLY"];
 		_para setPos [_finalPos # 0, _finalPos # 1, 100];
 
+		// TODO: setGroupOwner somehow. RPT errors for joining server created units to a non-local group
 		private _unit = group (_player) createUnit [_x, _target, [], 0, "NONE"];
 		_unit assignAsDriver _para;
 		_unit moveInDriver _para;

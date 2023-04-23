@@ -172,7 +172,7 @@ OWL_fnc_conditionRemoveAsset = {
 	params ["_player", "_asset"];
 
 	// TODO: use servers owned assets thing in OWL_allWarlords
-	if (owner _player != owner _asset) exitWith {
+	if (!([_player, _asset] call OWL_fnc_ownsAsset)) exitWith {
 		false;
 	};
 
@@ -193,7 +193,7 @@ OWL_fnc_conditionRemoveAsset = {
 OWL_fnc_conditionClearInventory = {
 	params ["_player", "_asset"];
 
-	if (owner _player != owner _asset) exitWith {
+	if (!([_player, _asset] call OWL_fnc_ownsAsset)) exitWith {
 		false;
 	};
 
@@ -214,7 +214,7 @@ OWL_fnc_conditionClearInventory = {
 OWL_fnc_conditionLockAsset = {
 	params ["_player", "_asset"];
 
-	if (owner _player != owner _asset) exitWith {
+	if (!([_player, _asset] call OWL_fnc_ownsAsset)) exitWith {
 		false;
 	};
 
@@ -254,17 +254,7 @@ OWL_fnc_conditioKickNonSquadMembers = {
 	if (isNull _player) exitWith {false};
 	if (isNull _asset) exitWith {false};
 
-	private _ownsAsset = false;
-	if (isServer) then {
-		private _info = OWL_allWarlords get (owner _player);
-		if (_asset in _info#1) then {
-			_ownsAsset = true;
-		};
-	} else {
-		if (_asset in OWL_playerAssets) then {
-			_ownsAsset = true;
-		};
-	};
+	private _ownsAsset = [_player, _asset] call OWL_fnc_ownsAsset;
 
 	private _toKick = false;
 	{

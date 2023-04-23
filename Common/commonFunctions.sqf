@@ -274,3 +274,20 @@ OWL_fnc_getFunds = {
 	};
 	_funds;
 };
+
+OWL_fnc_ownsAsset = {
+	params ["_player", "_asset"];
+
+	private _ownsAsset = false;
+	if (isServer) then {
+		private _info = OWL_allWarlords get (owner _player);
+		if (_asset in _info#1) then {
+			_ownsAsset = true;
+		};
+	} else {
+		if (_asset in OWL_playerAssets) then {
+			_ownsAsset = true;
+		};
+	};
+	_ownsAsset;
+};

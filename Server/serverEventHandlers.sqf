@@ -29,7 +29,7 @@ addMissionEventHandler ["PlayerDisconnected", {
 addMissionEventHandler ["OnUserClientStateChanged", {
 	params ["_networkId", "_clientStateNumber", "_clientState"];
 
-	systemChat str _this;
+	[(str _this)] call OWL_fnc_log;
 }];
 
 addMissionEventHandler ["EntityRespawned", {
