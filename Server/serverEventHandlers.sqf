@@ -26,6 +26,12 @@ addMissionEventHandler ["PlayerDisconnected", {
 	OWL_allWarlords deleteAt _owner;
 }];
 
+addMissionEventHandler ["OnUserClientStateChanged", {
+	params ["_networkId", "_clientStateNumber", "_clientState"];
+
+	systemChat str _this;
+}];
+
 addMissionEventHandler ["EntityRespawned", {
 	params ["_unit", "_corpse"];
 

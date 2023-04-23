@@ -39,10 +39,12 @@ OWL_fnc_crAirdrop = {
 	if (!([_target, _assets] call OWL_fnc_subConditionAirdrop)) exitWith {
 		format ["Airdrop Request from %1 (%2) does not meet conditions.", name _player] call OWL_fnc_log;
 	};
+
+	if (!([_player, _assets] call OWL_fnc_validateAssetPurchase)) exitWith {
+		format ["Airdrop Request from %1 (%2) does not meet conditions. (2)", name _player] call OWL_fnc_log;		
+	};
+
 	// TODO
-	// 1). Validate all assets are orderable
-	// 2). Validate price of all assets is affordable
-	// done). For all resupply boxes, duplicate versions can be merged into 1 (double the cargo)
 	// 4). For all Infantry / Vehicles, do position finding + parachute bs.
 	// 5). Adjust player command points
 	// 6). Adjust drop height based on proximity to sectors
@@ -154,18 +156,9 @@ OWL_fnc_crAirdrop = {
 	/* Server plays this sound */
 	playSound3D ["A3\Data_F_Warlords\sfx\flyby.wss", objNull, FALSE, _target vectorAdd [0, 0, 100]];
 
-	private _data = OWL_allWarlords getOrDefault [_client, [0,[],[]]];
-	private _assArr = _data # 1;
-	private _infArr = _data # 2;
-	_assArr append _ownedAssets;
-	_infArr append _squadMates;
-	_data set [1, _assArr];
-	_data set [2, _infArr];
-	OWL_allWarlords set [_client, _data];
-
 	// Send updated assets to player
-
 	[_ownedAssets, _squadMates] remoteExec ["OWL_fnc_srAirdrop", _client];
+	[_client, _ownedAssets, _squadMates] call OWL_fnc_completeAssetPurchase;
 };
 
 // Client requests to use a loadout
@@ -194,16 +187,6 @@ OWL_fnc_crLoadout = {
 	_player setUnitTrait ["ExplosiveSpecialist", ("ToolKit" in backpackItems _player)];
 	_player setUnitTrait ["Engineer", ("ToolKit" in backpackItems _player)];
 	_player setUnitTrait ["Medic", ("Medkit" in backpackItems _player)];
-};
-
-OWL_fnc_removeFastTravelTicket = {
-	params ["_sector", "_side"];
-
-	private _ticketArr = _sector getVariable ["OWL_sectorTickets", [0,0]];
-	private _sideIndex = OWL_competingSides find _side;
-	_ticketArr set [_sideIndex, (_ticketArr # _sideIndex) - 1];
-	_sector setVariable ["OWL_sectorTickets", _ticketArr, TRUE];
-	// If 0 Notify cliets? Or just let them be unable to fast travel?
 };
 
 // Client requests to fast travel. 
@@ -300,6 +283,7 @@ OWL_fnc_crDeployDefense = {
 	};
 
 	_defense remoteExec ["OWL_fnc_srDeployDefense", _client];
+	[_client, [_defense], []] call OWL_fnc_completeAssetPurchase;
 };
 
 // Requests to magically appear a boat in the water
@@ -321,6 +305,7 @@ OWL_fnc_crDeployNaval = {
 	private _veh = _asset createVehicle _loc;
 
 	_veh remoteExec ["OWL_fnc_srDeployNaval", _client];
+	[_client, [_veh], []] call OWL_fnc_completeAssetPurchase;
 };
 
 // Requests to have class '_asset' deployed at '_sector'
@@ -360,6 +345,7 @@ OWL_fnc_crAircraftSpawn = {
 		
 		_aircraft landAt _airportID;  
 		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", _client];
+
 		// So uglyyyyyyyy
 		_aircraft spawn {  
 			private _landed = false;  
@@ -392,6 +378,7 @@ OWL_fnc_crAircraftSpawn = {
 		_aircraft setDir _spawnDir;
 
 		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", remoteExecutedOwner];
+		[_client, [_aircraft], []] call OWL_fnc_completeAssetPurchase;
 
 		_aircraft land "LAND";
 		_aircraft spawn {
@@ -437,6 +424,51 @@ OWL_fnc_crRemoveAsset = {
 
 	deleteVehicle _asset;
 	remoteExec ["OWL_fnc_srOnAssetDeleted", _client];
+};
+
+OWL_fnc_crKickNonSquadMembers = {
+	params ["_asset"];
+
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_sectorVote: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if (!([_player, _asset] call OWL_fnc_conditioKickNonSquadMembers)) exitWith {
+		[format ["Asset Inventory clear Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
+	};
+
+	{
+		if (group _x != group _player) then {
+			unassignVehicle _x;
+			[_x] allowGetIn false;
+			moveOut _x;
+		};
+	} forEach crew _asset;
+};
+
+// Requests to have an assets inventory cleared
+OWL_fnc_crClearAssetInventory = {
+	params ["_asset"];
+
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_sectorVote: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if (!([_player, _asset] call OWL_fnc_conditionClearInventory)) exitWith {
+		[format ["Asset Inventory clear Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
+	};
+
+	clearBackpackCargoGlobal _asset;
+	clearItemCargoGlobal _asset;
+	clearMagazineCargoGlobal _asset;
+	clearWeaponCargoGlobal _asset;
+	_asset remoteExec ["OWL_fnc_srOnAssetInventoryCleared", _client];
 };
 
 // Requests to purchase reenforcements for a sector

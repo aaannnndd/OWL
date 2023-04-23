@@ -16,14 +16,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=235;
+		nextID=238;
 	};
 	class Camera
 	{
-		pos[]={3755.229,15.695856,10169.537};
-		dir[]={-0.55380195,-0.3943336,0.73337018};
-		up[]={-0.23763788,0.91896367,0.31469104};
-		aside[]={0.79803509,6.9907401e-008,0.60263449};
+		pos[]={13285.914,226.30705,15829.382};
+		dir[]={0.54715604,-0.29607841,0.78291631};
+		up[]={0.16960558,0.9551636,0.24268578};
+		aside[]={0.81966716,1.4901161e-008,-0.57284009};
 	};
 };
 binarizationWanted=0;
@@ -50,15 +50,13 @@ addons[]=
 	"A3_Structures_F_Mil_Helipads",
 	"A3_Ui_F",
 	"A3_Missions_F_Oldman",
-	"A3_Armor_F_Gamma_APC_Wheeled_03",
-	"A3_Soft_F_MRAP_02",
-	"A3_Soft_F_MRAP_01"
+	"A3_Armor_F_Gamma_APC_Wheeled_03"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=15;
+		items=14;
 		class Item0
 		{
 			className="A3_Characters_F";
@@ -154,13 +152,6 @@ class AddonsMetaData
 		{
 			className="A3_Armor_F_Gamma";
 			name="Arma 3 - Armored Land Vehicles";
-			author="Bohemia Interactive";
-			url="https://www.arma3.com";
-		};
-		class Item14
-		{
-			className="A3_Soft_F";
-			name="Arma 3 Alpha - Unarmored Land Vehicles";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
@@ -336,7 +327,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=175;
+		items=173;
 		class Item0
 		{
 			dataType="Group";
@@ -5610,40 +5601,6 @@ class Mission
 			id=1136;
 			type="I_APC_Wheeled_03_cannon_F";
 			atlOffset=-5.7220459e-005;
-		};
-		class Item173
-		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={3738.9175,4.2758045,10189.654};
-				angles[]={6.1874781,0,6.2219291};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-			};
-			id=2016;
-			type="O_MRAP_02_F";
-			atlOffset=-1.6093254e-005;
-		};
-		class Item174
-		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={3747.8308,3.5131693,10190.248};
-				angles[]={6.1467056,0,6.2312322};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-			};
-			id=2017;
-			type="B_MRAP_01_F";
-			atlOffset=-3.1471252e-005;
 		};
 	};
 	class Connections

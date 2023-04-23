@@ -173,14 +173,6 @@ OWL_fnc_rerouteAI = {
 	} forEach _vehicles;
 };
 
-/* Helper to get serverside funds */
-OWL_fnc_getFunds = {
-	params ["_ownerId"];
-
-	private _data = OWL_allWarlords getOrDefault [_ownerId, [0, [], []]];
-	_data#0;
-};
-
 /* Helper to set serverside funds */
 OWL_fnc_addFunds = {
 	params ["_ownerId", "_amount"];
@@ -198,4 +190,47 @@ OWL_fnc_addFunds = {
 	OWL_allWarlords set [_ownerId, _data];
 	_funds remoteExec ["OWL_fnc_srCPUpdate", _ownerId];
 	_funds;
+};
+
+/* Once purchase has been validated + spawned for the client, complete it and send updated command point balance */
+OWL_fnc_completeAssetPurchase = {
+	params ["_client", "_assets", "_inf"];
+
+	private _assetsClass = _assets apply {typeOf _x};
+	private _infClass = _inf apply {typeOf _x};
+	private _cost = [_assetsClass + _infClass] call OWL_fnc_getAssetPurchaseSubtotal;
+
+	private _data = OWL_allWarlords getOrDefault [_client, [0,[],[]]];
+	private _funds = _data # 0;
+	private _assArr = _data # 1;
+	private _infArr = _data # 2;
+
+	_assArr append _ownedAssets;
+	_infArr append _squadMates;
+
+	// Get rid of any null objects. This will happen on client as well.
+	while {_assArr find objNull != - 1} do {
+		_assArr deleteAt (_assArr find objNull);
+	};
+	while {_infArr find objNull != - 1} do {
+		_infArr deleteAt (_infArr find objNull);
+	};
+
+	_data set [0, _funds - _cost];
+	_data set [1, _assArr];
+	_data set [2, _infArr];
+
+	OWL_allWarlords set [_client, _data];
+	(_funds - _cost) remoteExec ["OWL_fnc_srCPUpdate", _client];
+};
+
+/* Handle removal of fast travel tickets */
+OWL_fnc_removeFastTravelTicket = {
+	params ["_sector", "_side"];
+
+	private _ticketArr = _sector getVariable ["OWL_sectorTickets", [0,0]];
+	private _sideIndex = OWL_competingSides find _side;
+	_ticketArr set [_sideIndex, (_ticketArr # _sideIndex) - 1];
+	_sector setVariable ["OWL_sectorTickets", _ticketArr, TRUE];
+	// If 0 Notify cliets? Or just let them be unable to fast travel?
 };

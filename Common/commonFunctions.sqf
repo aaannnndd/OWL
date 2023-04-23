@@ -204,3 +204,73 @@ OWL_fnc_validateObjectPlacement = {
 	
 	!_intersects;
 };
+
+OWL_fnc_getAssetPurchaseSubtotal = {
+	params ["_assets"];
+
+	private _total = 0;
+	{
+		(OWL_assetInfo getOrDefault [_x, ["", 0, ""]]) params ["_name", "_cost", "_requiremets"];
+		if (_name == "") then {
+			continue;
+		};
+
+		_total = _total + _cost;
+	} forEach _assets;
+
+	_total;
+};
+
+OWL_fnc_validateAssetPurchase = {
+	params ["_player", "_assets"];
+
+	private _cost = [_assets] call OWL_fnc_getAssetPurchaseSubtotal;
+	private _funds = _player call OWL_fnc_getFunds;
+
+	if (_cost > _funds) exitWith {
+		false;
+	};
+
+	private _assetForSide = [];
+	{
+		{
+			_assetForSide pushBack _x;
+		} forEach _y;
+	} forEach (OWL_assetList get (side group _player));
+
+	private _error = false;
+	{
+		if (!(_x in _assetForSide)) then {
+			_error = true;
+		};
+
+		(OWL_assetInfo getOrDefault [_x, ["", 0, ""]]) params ["_name", "_cost", "_requirements"];
+		if (_name == "") then {
+			_error = true;
+		};
+
+		{
+			if (!([side group player, _x] call OWL_fnc_hasAssetRequirement)) then {
+				_error = true;
+			};
+		} forEach (_requirements);
+	} forEach _assets;
+
+	if (_error) exitWith {
+		false;
+	};
+
+	true;
+};
+
+OWL_fnc_getFunds = {
+	params ["_player"];
+
+	private _funds = 0;
+	if (isServer) then {
+		_funds = (OWL_allWarlords getOrDefault [(owner _player), [0,[],[]]])#0; 
+	} else {
+		_funds = uiNamespace getVariable "OWL_UI_dummyFunds";
+	};
+	_funds;
+};

@@ -58,55 +58,75 @@ _asset_mgmt_asset_list lbAdd "Select Squad Or Assets";
 
 uiNamespace setVariable ["OWL_UI_asset_mgmt_asset_list", _asset_mgmt_asset_list];
 
-OWL_fnc_UI_controlCondition = {
-	params ["_asset", "_controlName"];
+OWL_fnc_UI_assetControlHandle = {
+	params ["_asset", "_controlName", "_control"];
 
 	private _res = false;
+
+	if (isNull _asset) exitWith {false};
+
 	switch (_controlName) do {
-		case "delete";
+		case "delete":
 		{
 			_res = (owner _asset == owner player);
 		};
-		case "lock";
+		case "lock":
 		{
-			//_asset setVehicleLock !(locked _asset);
+			_control ctrlSetStructuredText parseText (if (locked _asset == 2) then {localize "STR_A3_cfgvehicles_miscunlock_f_0"} else {localize "STR_A3_cfgvehicles_misclock_f_0"});	
 			_res = (owner _asset == owner player);
 		};
-		case "lights";
-		{
-			//_asset setPilotLight !(isLightOn _asset);
+		case "lights":
+		{	
+			_control ctrlSetStructuredText parseText (if (isLightOn _asset) then {"Lights off"} else {"Lights on"});		
 			_res = (owner _asset == owner player);
 		};
-		case "engine";
+		case "engine":
 		{
-			//_asset engineOn !(isEngineOn _asset);
+			_control ctrlSetStructuredText parseText (if (isEngineOn _asset) then {"Engine off"} else {"Engine on"});	
 			_res = (owner _asset == owner player);
 		};
-		case "radar";
+		case "radar":
 		{
-			//_asset setVehicleRadar (if (isVehicleRadarOn _asset) then {0} else {1});
-			_res = (owner _asset == owner player);
+			private _radarComponent =  (_asset isVehicleSensorEnabled "ActiveRadarSensorComponent");
+			if (count _radarComponent > 0) then {
+				_radarComponent = _radarComponent#0#1;
+			} else {
+				_radarComponent = false;
+			};
+
+			_res = (owner _asset == owner player) && !isNull (effectiveCommander _asset) && _radarComponent;
 		};
 		case "kick":
+		{
+			private _toKick = false;
+			{
+				if (group _x != group player) then {
+					_toKick = true;
+				};
+			} forEach crew _asset;
+			_res = (owner _asset == owner player) && _toKick;
+		};
+		case "clear":
 		{
 			_res = (owner _asset == owner player);
 		};
 	};
+	_control ctrlCommit 0;
 	_res;
 };
 
 _asset_mgmt_asset_list ctrlAddEventHandler ["LBSelChanged", {
 	params ["_list", "_index"];
 
-	private _selected = _list_category lbData _index;
+	private _selected = _list lbData _index;
 	_selected = _selected call BIS_fnc_objectFromNetId;
-
 	private _delete = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_delete", controlNull];
 	private _lock = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_lock", controlNull];
 	private _lights = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_lights", controlNull];
 	private _engine = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_engine", controlNull];
 	private _radar = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_radar", controlNull];
 	private _kick = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_kick", controlNull];
+	private _clear = uiNamespace getVariable ["OWL_UI_asset_mgmt_button_clear", controlNull];
 
 	if (isNull _selected) then {
 		_delete ctrlEnable false;
@@ -114,14 +134,17 @@ _asset_mgmt_asset_list ctrlAddEventHandler ["LBSelChanged", {
 		_lights ctrlEnable false;
 		_engine ctrlEnable false;
 		_radar ctrlEnable false;
-		_add ctrlEnable false;
+		_clear ctrlEnable false;
+		_kick ctrlEnable false;
+
 	} else {
-		_delete ctrlEnable ([_selected, "delete"] call OWL_fnc_UI_controlCondition);
-		_lock ctrlEnable ([_selected, "lock"] call OWL_fnc_UI_controlCondition);
-		_lights ctrlEnable ([_selected, "lights"] call OWL_fnc_UI_controlCondition);
-		_engine ctrlEnable ([_selected, "engine"] call OWL_fnc_UI_controlCondition);
-		_radar ctrlEnable ([_selected, "radar"] call OWL_fnc_UI_controlCondition);
-		_add ctrlEnable ([_selected, "kick"] call OWL_fnc_UI_controlCondition);
+		_delete ctrlEnable ([_selected, "delete", _delete] call OWL_fnc_UI_assetControlHandle);
+		_lock ctrlEnable ([_selected, "lock", _lock] call OWL_fnc_UI_assetControlHandle);
+		_lights ctrlEnable ([_selected, "lights", _lights] call OWL_fnc_UI_assetControlHandle);
+		_engine ctrlEnable ([_selected, "engine", _engine] call OWL_fnc_UI_assetControlHandle);
+		_radar ctrlEnable ([_selected, "radar", _radar] call OWL_fnc_UI_assetControlHandle);
+		_kick ctrlEnable ([_selected, "kick", _kick] call OWL_fnc_UI_assetControlHandle);
+		_clear ctrlEnable ([_selected, "clear", _clear] call OWL_fnc_UI_assetControlHandle);
 	};
 }];
 
@@ -173,14 +196,14 @@ _asset_mgmt_button_radar ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*13.55, _wb*3.
 _asset_mgmt_button_kick ctrlSetPosition [_xrel+4.5*_wb, _yrel+_hb*13.55, _wb*4, _hb*1];
 _asset_mgmt_button_clear ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*14.55, _wb*8, _hb*1];
 
-_asset_mgmt_button_delete ctrlSetStructuredText parseText "DELETE";
-_asset_mgmt_button_lock ctrlSetStructuredText parseText "LOCK";
-_asset_mgmt_button_lights ctrlSetStructuredText parseText "LIGHTS";
-_asset_mgmt_button_engine ctrlSetStructuredText parseText "ENGINE";
-_asset_mgmt_button_radar ctrlSetStructuredText parseText "RADAR";
-_asset_mgmt_button_kick ctrlSetStructuredText parseText "KICK";
+_asset_mgmt_button_delete ctrlSetStructuredText parseText "Delete";
+_asset_mgmt_button_lock ctrlSetStructuredText parseText "Lock/Unlock";
+_asset_mgmt_button_lights ctrlSetStructuredText parseText "Lights on/off";
+_asset_mgmt_button_engine ctrlSetStructuredText parseText "Engine on/off";
+_asset_mgmt_button_radar ctrlSetStructuredText parseText "Radar on/off";
+_asset_mgmt_button_kick ctrlSetStructuredText parseText "Kick crew";
 _asset_mgmt_button_kick ctrlSetTooltip "Remove non-squad members from vehicle.";
-_asset_mgmt_button_clear ctrlSetStructuredText parseText "CLEAR";
+_asset_mgmt_button_clear ctrlSetStructuredText parseText "Clear inv";
 _asset_mgmt_button_clear ctrlSetTooltip "Clear all items from vehicle inventory.";
 
 _asset_mgmt_button_delete ctrlCommit 0;
@@ -190,7 +213,6 @@ _asset_mgmt_button_engine ctrlCommit 0;
 _asset_mgmt_button_radar ctrlCommit 0;
 _asset_mgmt_button_kick ctrlCommit 0;
 _asset_mgmt_button_clear ctrlCommit 0;
-// TODO: to toggleable options, set red/green for 'on/off' when you click them.
 
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_delete", _asset_mgmt_button_delete];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lock", _asset_mgmt_button_lock];
@@ -198,6 +220,7 @@ uiNamespace setVariable ["OWL_UI_asset_mgmt_button_lights", _asset_mgmt_button_l
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_engine", _asset_mgmt_button_engine];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_radar", _asset_mgmt_button_radar];
 uiNamespace setVariable ["OWL_UI_asset_mgmt_button_kick", _asset_mgmt_button_kick];
+uiNamespace setVariable ["OWL_UI_asset_mgmt_button_clear", _asset_mgmt_button_clear];
 
 OWL_fnc_UI_mgmt_getSelected = {
 	private _list = uiNamespace getVariable ["OWL_UI_asset_mgmt_asset_list", controlNull];
@@ -213,23 +236,23 @@ OWL_fnc_UI_mgmt_getSelected = {
 _asset_mgmt_button_delete ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
-		systemChat "delete";
+		_selected remoteExec ["OWL_fnc_crRemoveAsset", 2];
 	};
 }];
 
 _asset_mgmt_button_lock ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
-		systemChat "lock";		
+		_selected lock abs (locked _selected - 2);
+		(_this#0) ctrlSetStructuredText parseText (if (locked _selected == 2) then {localize "STR_A3_cfgvehicles_miscunlock_f_0"} else {localize "STR_A3_cfgvehicles_misclock_f_0"});	
 	};
 }];
 
 _asset_mgmt_button_lights ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
+		_selected setPilotLight !(isLightOn _selected);
+		(_this#0) ctrlSetStructuredText parseText (if (isLightOn _selected) then {"Lights off"} else {"Lights on"});	
 		systemChat "lights";		
 	};
 }];
@@ -237,7 +260,8 @@ _asset_mgmt_button_lights ctrlAddEventHandler ["ButtonClick", {
 _asset_mgmt_button_engine ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
+		_selected engineOn !(isEngineOn _selected);
+		(_this#0) ctrlSetStructuredText parseText (if (isEngineOn _selected) then {"Engine off"} else {"Engine on"});	
 		systemChat "engine";		
 	};
 }];
@@ -245,16 +269,23 @@ _asset_mgmt_button_engine ctrlAddEventHandler ["ButtonClick", {
 _asset_mgmt_button_radar ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
-		systemChat "radar";		
+		// I am so confused. I don't know how to get this to work.
+		(effectiveCommander _selected) action [if (isVehicleRadarOn _selected) then {"ActiveSensorsOff"} else {"ActiveSensorsOn"}, _selected];
+		(_this#0) ctrlSetStructuredText parseText (if (isVehicleRadarOn _selected) then {"Radar off"} else {"Radar on"});	
 	};
 }];
 
 _asset_mgmt_button_kick ctrlAddEventHandler ["ButtonClick", {
 	_selected = call OWL_fnc_UI_mgmt_getSelected;
 	if (!isNull _selected) then {
-		systemChat str _selected;
-		systemChat "kick";
+		_selected remoteExec ["OWL_fnc_crKickNonSquadMembers", 2];
+	};
+}];
+
+_asset_mgmt_button_clear ctrlAddEventHandler ["ButtonClick", {
+	_selected = call OWL_fnc_UI_mgmt_getSelected;
+	if (!isNull _selected) then {
+		_selected remoteExec ["OWL_fnc_crClearAssetInventory", 2];
 	};
 }];
 /*

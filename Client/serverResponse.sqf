@@ -397,9 +397,9 @@ OWL_srZoneRestrictTimer = {
 		_label ctrlSetStructuredText parseText format ["<t size='0.15'>&#160;</t><br/><t size='1' align='center'>RESTRICTED AREA</t>"];
 		_progress ctrlSetTextColor [0.8, 0.2, 0, 0.8];
 
-		localize "$STR_A3_OWL_zone_restriction" spawn BIS_fnc_WLSmoothText;
 		if (!(uiNamespace getVariable ["OWL_UI_data_options_zrAudio", false])) then {
 			playSound "air_raid";
+			localize "$STR_A3_OWL_zone_restriction" spawn BIS_fnc_WLSmoothText;
 		};
 
 		while {_timestamp > serverTime} do {
@@ -442,9 +442,15 @@ OWL_fnc_srSectorSelected = {
 
 OWL_fnc_srOnAssetDeleted = {
 	// Update your asset list (check for objNull and remove)
-	private _index = objNull find OWL_playerAssets;
+	private _index = OWL_playerAssets find objNull;
 	while {_index != -1} do {
 		OWL_playerAssets deleteAt _index;
-		_index = objNull find OWL_playerAssets;
+		_index = OWL_playerAssets find objNull;
 	};
+};
+
+OWL_fnc_srOnAssetInventoryCleared = {
+	params ["_asset"];
+	
+	format [localize "$STR_A3_OWL_vehicle_cargo_cleared", toUPPER (getText (configFile >> "CfgVehicles" >> typeOf _asset >> "displayName"))] spawn BIS_fnc_WLSmoothText;
 };

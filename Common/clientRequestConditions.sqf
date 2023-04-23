@@ -145,6 +145,11 @@ OWL_fnc_conditionDeployDefense = {
 // Just check if it's a water surface
 OWL_fnc_conditionDeployNaval = {
 	params ["_player", "_asset", "_position"];
+
+	if (!(surfaceIsWater _position)) exitWith {
+		false;
+	};
+	
     true;
 };
 
@@ -185,6 +190,27 @@ OWL_fnc_conditionRemoveAsset = {
 	true;
 };
 
+OWL_fnc_conditionClearInventory = {
+	params ["_player", "_asset"];
+
+	if (owner _player != owner _asset) exitWith {
+		false;
+	};
+
+	private _hasPlayer = false;
+	{
+		if (alive _x && isPlayer _x) then {
+			_hasPlayer = true;
+		};
+	} forEach crew _asset;
+
+	if (_hasPlayer) exitWith {
+		false;
+	};
+
+	true;
+};
+
 OWL_fnc_conditionLockAsset = {
 	params ["_player", "_asset"];
 
@@ -197,7 +223,7 @@ OWL_fnc_conditionLockAsset = {
 		if (alive _x && isPlayer _x) then {
 			_hasPlayer = true;
 		};
-	} forEach crew _vehicle;
+	} forEach crew _asset;
 
 	if (_hasPlayer) exitWith {
 		false;
@@ -220,6 +246,34 @@ OWL_fnc_conditionToggleRadar = {
 
 OWL_fnc_conditionAddAssetToSector = {
 	params ["_player", "_asset", "_sector"];
+};
+
+OWL_fnc_conditioKickNonSquadMembers = {
+	params ["_player", "_asset"];
+
+	if (isNull _player) exitWith {false};
+	if (isNull _asset) exitWith {false};
+
+	private _ownsAsset = false;
+	if (isServer) then {
+		private _info = OWL_allWarlords get (owner _player);
+		if (_asset in _info#1) then {
+			_ownsAsset = true;
+		};
+	} else {
+		if (_asset in OWL_playerAssets) then {
+			_ownsAsset = true;
+		};
+	};
+
+	private _toKick = false;
+	{
+		if (group _x != group _player) then {
+			_toKick = true;
+		};
+	} forEach crew _asset;
+
+	_toKick && _ownsAsset;
 };
 
 

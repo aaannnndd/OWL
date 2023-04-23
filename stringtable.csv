@@ -72,3 +72,5 @@ STR_A3_OWL_fast_travel, "FAST TRAVELLING TO %1"
 STR_A3_OWL_sector_scan, "INCOMING SECTOR SCAN: %1"
 STR_A3_OWL_sector_scan_terminated, "SECTOR SCAN TERMINATED: %1"
 STR_A3_OWL_sector_selected, "SECTOR SELECTED: %1"
+
+STR_A3_OWL_vehicle_cargo_cleared, "CARGO CLEARED: %1"
