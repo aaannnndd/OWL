@@ -766,7 +766,7 @@ _asset_map ctrlAddEventHandler ["MouseMoving", {
 				_tooltip ctrlEnable false;
 
 				_color = ['#0099ff', '#DD1111', '#00ff44'] # ([WEST, EAST, RESISTANCE] find (_sector getVariable "OWL_sectorSide"));
-				_tooltip ctrlSetStructuredText parseText format ["<t size='0.8' align='center' color='%2' valign='middle'>%1</t></br><t size='0.5' align='left' ", _sector getVariable "OWL_sectorName", _color];
+				_tooltip ctrlSetStructuredText parseText format ["<t size='0.8' align='center' color='%2' valign='middle'>%1</t>", _sector getVariable "OWL_sectorName", _color];
 
 				_pos = _map ctrlMapWorldToScreen (position _sector);
 

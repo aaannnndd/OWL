@@ -418,7 +418,7 @@ _strategy_map ctrlAddEventHandler ["MouseMoving", {
 					_tooltip ctrlEnable false;
 				};
 
-				private _struct = format ["<t size='0.8' align='center' valign='middle' shadow='2'>%1</t></br><t size='0.5' align='left' ", _sector getVariable "OWL_sectorName"];
+				private _struct = format ["<t size='0.8' align='center' valign='middle' shadow='2'>%1</t>", _sector getVariable "OWL_sectorName"];
 				_struct = _struct + "ok";
 				_tooltip ctrlSetStructuredText parseText _struct;
 				_pos = _map ctrlMapWorldToScreen (position _sector);

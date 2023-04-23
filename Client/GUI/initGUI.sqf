@@ -18,19 +18,6 @@ OWL_fnc_UI_mapDrawCommon = {
 	_eh = _ctrlMap getVariable ["OWL_UI_mapEH", []];
 	if (count _eh == 0) then {
 		_eh = _ctrlMap ctrlAddEventHandler ["Draw", {
-			/*_this select 0 drawIcon [
-				getMissionPath "data\aircraft_carrier.paa",
-				[1,1,1,1],
-				getPosASLVisual asd,
-				(9.05)*(1/(ctrlMapScale (_this select 0))),
-				2.2525*(1/(ctrlMapScale (_this select 0))),
-				((getDirVisual asd)+90.5)%360,
-				"",
-				1,
-				0.03,
-				"TahomaB",
-				"right"	
-			];*/
 			if (OWL_gameState # OWL_sideIndex == "voting") then {
 				private _voteList = OWL_sectorVoteList # OWL_sideIndex;
 				private _maxVotes = 0;
@@ -173,7 +160,7 @@ _mainMap ctrlAddEventHandler ["MouseMoving", {
 					_tooltip ctrlEnable false;
 				};
 
-				private _struct = format ["<t size='0.8' align='center' valign='middle' shadow='2'>%1</t></br><t size='0.5' align='left' ", _sector getVariable "OWL_sectorName"];
+				private _struct = format ["<t size='0.8' align='center' valign='middle' shadow='2'>%1</t>", _sector getVariable "OWL_sectorName"];
 				_struct = _struct + "ok";
 				_tooltip ctrlSetStructuredText parseText _struct;
 				_pos = _map ctrlMapWorldToScreen (position _sector);
