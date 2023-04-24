@@ -51,7 +51,6 @@ _asset_mgmt_button_assets ctrlCommit 0;
 
 private _asset_mgmt_asset_list = _display ctrlCreate ["RscListBox", _tabIdx call OWL_fnc_TabIDC];
 _asset_mgmt_asset_list ctrlSetPosition [_xrel+0.5*_wb, _yrel+_hb*4.25, _wb*8, _hb*7];
-_asset_mgmt_asset_list ctrlSetStructuredText parseText "Assets";
 _asset_mgmt_asset_list ctrlCommit 0;
 
 _asset_mgmt_asset_list lbAdd "Select Squad Or Assets";
