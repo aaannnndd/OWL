@@ -346,7 +346,7 @@ OWL_fnc_crAircraftSpawn = {
 		
 		_aircraft landAt _airportID;  
 		_aircraft remoteExec ["OWL_fnc_srAircraftSpawn", _client];
-
+		[_client, [_aircraft], []] call OWL_fnc_completeAssetPurchase;
 		// So uglyyyyyyyy
 		_aircraft spawn {  
 			private _landed = false;  

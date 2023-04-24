@@ -106,7 +106,7 @@ OWL_fnc_UI_updateStrategyLabel = {
 
 	private _text = ""; 
 	if (isNull _sector) then {
-		_text = _text + "<t size='1.5' align='center' valign='middle'>Select a Sector<br/></t><t size='1' align='center' color='#AAAAAAAA' valign='left'>Selecting a sector will allow you to fast travel, scan, or re-enforce that sector.</t>";
+		_text = _text + "<t size='1.5' align='center' valign='middle'>Select a Sector<br/></t><t size='1' align='center' color='#AAAAAAAA'>Selecting a sector will allow you to fast travel, scan, or re-enforce that sector.</t>";
 	} else {
 		private _protected = _sector getVariable "OWL_sectorProtected";
 		private _tickets = [_sector, side player] call OWL_fnc_sectorTicketCount;
@@ -117,7 +117,7 @@ OWL_fnc_UI_updateStrategyLabel = {
 		_assetLimit = floor (_assetLimit / 100);
 		_assetLimit = [_assetLimit*5,_assetLimit,floor (_assetLimit/2)];
 
-		_text = "<t size='1.5' align='center' valign='middle'>%1<br/></t><t size='1' align='center' color='%2' valign='left'>%3</t><t size='1' align='center'><t size='1.25' align='center' valign='middle'><br/>Respawn Tickets: %4<br/></t><t size='1' align='center'><br/>Infantry: %5/%6<br/></t><t size='1' align='center'>Light Armor: %7/%8<br/></t><t size='1' align='center'>Armor: %9/%10<br/></t>";
+		_text = "<t size='1.5' align='center' valign='middle'>%1<br/></t><t size='1' align='center' color='%2'>%3</t><t size='1' align='center'><t size='1.25' align='center' valign='middle'><br/>Respawn Tickets: %4<br/></t><t size='1' align='center'><br/>Infantry: %5/%6<br/></t><t size='1' align='center'>Light Armor: %7/%8<br/></t><t size='1' align='center'>Armor: %9/%10<br/></t>";
 		_text = format [_text, _sector getVariable "OWL_sectorName", if (_protected) then {"#00FF00"} else {"#FF0000"}, if (_protected) then {"Protected"} else {"Unprotected"}, if (_tickets > 1e10) then {"Unlimited"} else {_tickets}, count (_assets#0), _assetLimit#0, count (_assets#1), _assetLimit#1, count (_assets#2), _assetLimit#2];
 	};
 

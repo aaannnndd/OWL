@@ -470,7 +470,7 @@ OWL_fnc_UI_AssetTab_updateAssetPreview = {
 			_reqs = (_reqs#0);
 			_color = '#ff0000';
 			if ([playerSide, _reqs] call OWL_fnc_hasAssetRequirement) then {_color = '#00ff00';};
-			_fmtBlock = _fmtBlock + format ["<t size='0.75' align='left' color='%1' valign='left'>*Requires %2<br/></t>", _color, _reqs call OWL_fnc_getAssetRequirementName];
+			_fmtBlock = _fmtBlock + format ["<t size='0.75' align='left' color='%1'>*Requires %2<br/></t>", _color, _reqs call OWL_fnc_getAssetRequirementName];
 		};
 	};
 

@@ -200,13 +200,13 @@ OWL_fnc_completeAssetPurchase = {
 	private _infClass = _inf apply {typeOf _x};
 	private _cost = [_assetsClass + _infClass] call OWL_fnc_getAssetPurchaseSubtotal;
 
-	private _data = OWL_allWarlords getOrDefault [_client, [0,[],[]]];
+	private _data = OWL_allWarlords getOrDefault [_client, [0,[],[], side group player]];
 	private _funds = _data # 0;
 	private _assArr = _data # 1;
 	private _infArr = _data # 2;
 
-	_assArr append _ownedAssets;
-	_infArr append _squadMates;
+	_assArr append _assets;
+	_infArr append _inf;
 
 	// Get rid of any null objects. This will happen on client as well.
 	while {_assArr find objNull != - 1} do {
