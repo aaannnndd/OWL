@@ -281,7 +281,7 @@ OWL_fnc_ownsAsset = {
 	private _ownsAsset = false;
 	if (isServer) then {
 		private _info = OWL_allWarlords get (owner _player);
-		if (_asset in _info#1) then {
+		if (_asset in (_info#1 + _info#2)) then {
 			_ownsAsset = true;
 		};
 	} else {

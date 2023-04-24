@@ -18,9 +18,10 @@ addMissionEventHandler ["PlayerDisconnected", {
 			};
 
 		} forEach _squadMembers;
-		_info set [2, []];
+		_info set [2, [], side group _player];
 
-		_persistentData set [_uid, _info];
+		OWL_persistentData set [_uid, _info];
+		[str _info] call OWL_fnc_log;
 	};
 
 	OWL_allWarlords deleteAt _owner;
@@ -82,4 +83,10 @@ addMissionEventHandler ["EntityCreated", {
 
 	// if faction == "IND_F" / "BLU_T_F"
 	// _textSel = "Indep_Olive" / "Olive"
+}];
+
+addMissionEventHandler ["Ended", {
+	params ["_endType"];
+
+	saveProfileNamespace;
 }];
