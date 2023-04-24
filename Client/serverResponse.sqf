@@ -454,3 +454,23 @@ OWL_fnc_srOnAssetInventoryCleared = {
 	
 	format [localize "$STR_A3_OWL_vehicle_cargo_cleared", toUPPER (getText (configFile >> "CfgVehicles" >> typeOf _asset >> "displayName"))] spawn BIS_fnc_WLSmoothText;
 };
+
+OWL_fnc_srBugReportRecieve = {
+	params ["_bugReports"];
+
+	private _bug_list = uiNamespace getVariable ["OWL_UI_options_bug_report_list", controlNull];
+	{
+		_bug_list lbAdd str _forEachIndex;
+		_bug_list lbSetValue [_forEachIndex, _forEachIndex];
+		_bug_list lbSetData [_forEachindex, _x];
+	} forEach _bugReports;
+
+	_bug_list ctrlAddEventHandler ["LBSelChanged", {
+		params ["_list", "_index"];
+
+		private _bug_text = uiNamespace getVariable ["OWL_UI_options_bug_report_text", controlNull];
+		private _bug_report = _list lbData _index;
+		_bug_text ctrlSetText _bug_report;
+		_bug_text ctrlCommit 0;
+	}];
+};

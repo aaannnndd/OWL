@@ -17,8 +17,14 @@ OWL_fnc_ICS = {
 	private _uid = getPlayerUID _player;
 	// OWL_allWarlords [ownerId, [CommandPoints, OwnedAssets, OwnedSquadmates]]
 	// SquadMates not neccessary since we'll delete whe player logs out.
-	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, [], []]];
-	OWL_allWarlords set [_client, _persistentData];
+	private _persistentData = OWL_persistentData getOrDefault [_uid,[0, [], [], side group _player]];
+
+	if (_persistentData # 3 == side group _player) then {
+		OWL_allWarlords set [_client, _persistentData];
+	} else {
+		// Add old data to bank.
+		OWL_allWarlords set [_client, [0, [], [], side group _player]];
+	};
 
 	_persistentData remoteExec ["OWL_fnc_srInitClient", _client];
 };
@@ -534,4 +540,47 @@ OWL_fnc_crSectorVote = {
 
 	// Update the clients with new vote info
 	remoteExec ["OWL_fnc_srSectorVoteUpdate", side _player];
+};
+
+OWL_fnc_crBugReport = {
+	params ["_text"];
+
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_BugReporte: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	private _bugReports = profileNamespace getVariable ["OWL_BUG_REPORTS", []];
+	_bugReports pushBack ((name _player) + ": " + _text);
+	profileNamespace setVariable ["OWL_BUG_REPORTS", _bugReports];
+};
+
+OWL_fnc_crReadBugReport = {
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+	if (isNull _player) exitWith {
+		["OWL_fnc_CL_ReadBugReport: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if(admin _client != 2) exitWith {
+		["OWL_fnc_CL_ReadBugReport: remoteExecutedOwner not an admin."] call OWL_fnc_log;
+	};
+	private _bugReports = profileNamespace getVariable ["OWL_BUG_REPORTS", []];
+	[_bugReports] remoteExec ["OWL_fnc_srBugReportRecieve", _client];
+};
+
+OWL_fnc_crClearBugReports = {
+	private _client = remoteExecutedOwner;
+	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
+	if (isNull _player) exitWith {
+		["OWL_fnc_crClearBugReports: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if(admin _client != 2) exitWith {
+		["OWL_fnc_crClearBugReports: remoteExecutedOwner not an admin."] call OWL_fnc_log;
+	};
+
+	profileNamespace setVariable ["OWL_BUG_REPORTS", []];
+	"Cleared. Refresh Menu" remoteExec ["systemChat", _client];
 };
