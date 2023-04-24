@@ -1,5 +1,5 @@
 /* All event handlers on the SERVER SIDE */
-// TODO: swap this to 'clientStateChanged' since you can team switch and zzzz
+
 addMissionEventHandler ["PlayerDisconnected", {
 	params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
 
@@ -58,31 +58,6 @@ OWL_fnc_registerVehicleDatalink = {
 
 addMissionEventHandler ["EntityCreated", {
 	params ["_entity"];
-	
-	switch (typeOf _entity) do {
-		case "B_MBT_01_TUSK_F":
-		{
-			_entity setMass 30000;
-			_entity addWeaponTurret ["SmokeLauncher", [-1]];
-			_entity addMagazineTurret ["SmokeLauncherMag", [-1]];
-			_entity loadMagazine [[-1], "SmokeLauncher", "SmokeLauncherMag"];
-		};
-	};
-
-	/*
-		_objType = (typeOf cursorObject); 
-		_colorName = ["Olive", "Indep_Olive"] # (["BLU_F", "IND_F"] find getText (configFile >> "CfgVehicles" >> _objType >> "faction"));
-		systemChat str _colorName;
-		_hidSel = getArray (configFile >> "CfgVehicles" >> _objType >> "TextureSources" >> _colorName >> "textures"); 
-		{ 
-			cursorObject setObjectTextureGlobal [_forEachIndex, _x]; 
-		} forEach _hidSel; 
-
-		// for kuma [cursorObject, false, ["showCamonetHull",1,"showCamonetTurret",1, "showCamonetCannon", 1, "showCamonetCannon1", 1]] call BIS_fnc_initVehicle;
-	*/
-
-	// if faction == "IND_F" / "BLU_T_F"
-	// _textSel = "Indep_Olive" / "Olive"
 }];
 
 addMissionEventHandler ["Ended", {

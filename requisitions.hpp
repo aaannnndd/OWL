@@ -42,10 +42,12 @@ class CfgWLRequisitionPresets
 				class B_APC_Wheeled_01_cannon_F			{cost = 3000;	requirements[]={};	};	// "AMV-7 Marshall"
 				class B_APC_Tracked_01_rcws_F			{cost = 3500;	requirements[]={};	};	// "IFV-6c Panther"
 				class B_APC_Tracked_01_AA_F			{cost = 4000;	requirements[]={};	};	// "IFV-6a Cheetah"
+				class I_LT_01_AA_F					{cost = 4000;	requirements[]={};	};	// Nyx AA
 				class B_MBT_01_cannon_F				{cost = 5000;	requirements[]={};	};	// "M2A1 Slammer"
 				class B_MBT_01_TUSK_F				{cost = 5500;	requirements[]={};	};	// "M2A1 Slammer UP"
+				class I_MBT_03_cannon_F				{cost = 6500;	requirements[]={};	};	// Kuma
 				class B_AFV_Wheeled_01_cannon_F			{cost = 7000;	requirements[]={};	};	// "Rhino MGS"
-				class B_AFV_Wheeled_01_up_cannon_F		{cost = 7500;	requirements[]={};	};	// "Rhino MGS UP"
+				class B_AFV_Wheeled_01_up_cannon_F		{cost = 7500;	requirements[]={};	};	// "Rhino MGS UP"	
 			};
 			class Aircraft
 			{

@@ -135,6 +135,28 @@ OWL_fnc_crAirdrop = {
 		private _finalPos = _target findEmptyPosition [0, 100, _x];
 		private _vehicle = createVehicle [_x, _finalPos, [], 0, "CAN_COLLIDE"];
 
+		// This homogenizes the asset color for blufor if they are going to have AAF assets available. Only problem is Rhino doesn't have olive skin >:|
+		private _faction = getText (configFile >> "CfgVehicles" >> _x >> "faction");
+		if (_faction in ["BLU_F", "IND_F"] && side group _player == WEST) then {
+			
+			if (_x == "I_MBT_03_cannon_F") then {
+				[_vehicle, false, ["showCamonetHull",1,"showCamonetTurret",1, "showCamonetCannon", 1, "showCamonetCannon1", 1]] call BIS_fnc_initVehicle;
+			} else {
+				_colorName = ["Olive", "Indep_Olive"] # (["BLU_F", "IND_F"] find _faction);
+				_hidSel = getArray (configFile >> "CfgVehicles" >> _x >> "TextureSources" >> _colorName >> "textures"); 
+				{
+					_vehicle setObjectTextureGlobal [_forEachIndex, _x]; 
+				} forEach _hidSel; 
+			}
+		};
+
+		if (_x == "B_MBT_01_TUSK_F") then {
+			_vehicle setMass 30000;
+			//_vehicle addWeaponTurret ["SmokeLauncher", [-1]];
+			//_vehicle addMagazineTurret ["SmokeLauncherMag", [-1]];
+			//_vehicle loadMagazine [[-1], "SmokeLauncher", "SmokeLauncherMag"];
+		};
+
 		private _para = createVehicle ["B_Parachute_02_F", _finalPos, [], 0, "FLY"];
 		_para setPos [_finalPos # 0, _finalPos # 1, 100];
 		_para disableCollisionWith _vehicle;
@@ -322,7 +344,11 @@ OWL_fnc_crAircraftSpawn = {
 	private _client = remoteExecutedOwner;
 	private _player = _client call OWL_fnc_getPlayerFromOwnerId;
 
-	if (!(_this call OWL_fnc_conditionAircraftSpawn)) exitWith {
+	if (isNull _player) exitWith {
+		["OWL_fnc_crAircraftSpawn: remoteExecutedOwner not found in player list."] call OWL_fnc_log;
+	};
+
+	if (!([_player, _sector, _asset] call OWL_fnc_conditionAircraftSpawn)) exitWith {
 		[format ["Aircraft Request from %1 (%2) does not meet conditions.", name _player]] call OWL_fnc_log;
 	};
 

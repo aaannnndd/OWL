@@ -156,6 +156,19 @@ OWL_fnc_conditionDeployNaval = {
 // Check if proper disposition
 OWL_fnc_conditionAircraftSpawn = {
 	params ["_player", "_sector", "_asset"];
+
+	if (isNull _player) exitWith {
+		false;
+	};
+
+	if (isNull _sector) exitWith {
+		false;
+	};
+
+	if (!([_player, [_asset]] call OWL_fnc_validateAssetPurchase)) exitWith {
+		false;
+	};
+
     true;
 };
 

@@ -244,7 +244,7 @@ OWL_fnc_validateAssetPurchase = {
 			_error = true;
 		};
 
-		(OWL_assetInfo getOrDefault [_x, ["", 0, ""]]) params ["_name", "_cost", "_requirements"];
+		(OWL_assetInfo getOrDefault [_x, ["", 0, []]]) params ["_name", "_cost", "_requirements"];
 		if (_name == "") then {
 			_error = true;
 		};

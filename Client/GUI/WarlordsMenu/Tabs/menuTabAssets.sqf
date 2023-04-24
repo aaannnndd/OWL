@@ -131,6 +131,9 @@ OWL_fnc_UI_checkAssetRequirements = {
 		};
 	};
 
+	// TODO: this is such spaghetti, rewrite.
+	// Need to check assets against their conditions with sectors ect.
+
 	_errorCode;
 };
 
