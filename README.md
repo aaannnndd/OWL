@@ -8,7 +8,7 @@ I've purchased a dedicated server for testing and plan to upgrade it once the pr
 
 If you would like to see how the project is coming along, the test server is usually running an up to date version of the project.
 
-**Discord**: https://discord.gg/DQjYRMvv
+**Discord**: [https://discord.gg/DQjYRMvv](https://discord.gg/SBGrYUpvba)
 
 **Server Info**: 160.202.167.19:2542
 
